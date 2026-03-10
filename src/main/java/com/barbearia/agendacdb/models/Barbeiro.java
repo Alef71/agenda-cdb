@@ -1,9 +1,19 @@
 package com.barbearia.agendacdb.models;
 
+import java.util.UUID;
+
 import com.barbearia.agendacdb.enums.RoleBarbeiro;
 import com.barbearia.agendacdb.enums.StatusAprovacao;
-import jakarta.persistence.*;
-import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "barbeiros")
@@ -19,8 +29,9 @@ public class Barbeiro {
     @Column(nullable = false, unique = true)
     private String cpf;
 
-    private String whatsapp;
-
+   private String whatsapp;
+   
+    @JsonIgnore
     @Column(nullable = false)
     private String senha;
 
