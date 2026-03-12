@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbearia CDB - Autenticação</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/login.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <div class="auth-container">
+        
+        <div class="auth-card" id="view-login">
+            <div class="logo-container">
+                <h2><span>CDB</span>Barbearia</h2>
+            </div>
+            <h1>Faça seu logon</h1>
+
+            <form id="form-login">
+                <div class="input-group">
+                    <i data-lucide="user"></i>
+                    <input type="text" id="login-cpf" placeholder="CPF" required>
+                </div>
+                <div class="input-group">
+                    <i data-lucide="lock"></i>
+                    <input type="password" id="login-senha" placeholder="Senha" required>
+                </div>
+                <button type="submit" class="btn-primary" id="btn-submit-login">Entrar</button>
+            </form>
+
+            <a href="#" class="forgot-password">Esqueci minha senha</a>
+            
+            <a href="#" class="create-account" id="btn-ir-cadastro">
+                <i data-lucide="log-in"></i>
+                Criar conta
+            </a>
+        </div>
+
+        <div class="auth-card hidden" id="view-cadastro">
+            <div class="logo-container">
+                <h2><span>CDB</span>Barbearia</h2>
+            </div>
+            <h1>Crie sua conta</h1>
+
+            <form id="form-cadastro">
+                <div class="input-group">
+                    <i data-lucide="user"></i>
+                    <input type="text" id="cad-nome" placeholder="Nome completo" required>
+                </div>
+                <div class="input-group">
+                    <i data-lucide="file-text"></i>
+                    <input type="text" id="cad-cpf" placeholder="CPF (Apenas números)" required>
+                </div>
+                <div class="input-group">
+                    <i data-lucide="phone"></i>
+                    <input type="text" id="cad-whatsapp" placeholder="WhatsApp" required>
+                </div>
+                <div class="input-group">
+                    <i data-lucide="lock"></i>
+                    <input type="password" id="cad-senha" placeholder="Senha" required>
+                </div>
+                <div class="input-group">
+                    <i data-lucide="image"></i>
+                    <input type="url" id="cad-fotoUrl" placeholder="URL da foto (Opcional)">
+                </div>
+
+                <button type="submit" class="btn-primary" id="btn-submit-cadastro">Cadastrar</button>
+            </form>
+
+            <a href="#" class="create-account" id="btn-voltar-login">
+                <i data-lucide="arrow-left"></i>
+                Voltar para o login
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+    <script src="js/login.js"></script>
+</body>
+</html>

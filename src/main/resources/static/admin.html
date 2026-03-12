@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbearia CDB - Painel Admin</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/admin.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-container">
+                <h2><span>CDB</span>Admin</h2>
+            </div>
+
+            <div class="profile-container">
+                <div class="profile">
+                    <img id="foto-admin" src="" alt="Foto Admin">
+                    <div>
+                        <span>Modo Administrador</span>
+                        <strong id="nome-admin">Carregando...</strong>
+                    </div>
+                </div>
+                <button class="logout-btn" title="Sair" id="btn-sair">
+                    <i data-lucide="power"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        
+        <header class="admin-header-title">
+            <h1>Painel de Controle</h1>
+            <p>Gerencie a equipe e os serviços da barbearia</p>
+        </header>
+
+        <div class="dashboard-grid">
+            
+            <section class="admin-section">
+                <div class="section-header">
+                    <h2>Barbeiros Pendentes</h2>
+                    <span class="badge" id="contador-pendentes">0</span>
+                </div>
+                <p class="section-desc">Novos registros aguardando sua aprovação para acessar o sistema.</p>
+                <div class="pending-list" id="lista-pendentes">
+                    </div>
+
+                <div class="section-header" style="margin-top: 40px;">
+                    <h2>Equipe / Barbeiros Ativos</h2>
+                </div>
+                <p class="section-desc">Barbeiros que já possuem acesso ao sistema.</p>
+                <div class="pending-list" id="lista-aprovados">
+                    </div>
+            </section>
+
+            <aside class="admin-sidebar">
+                <div class="admin-section">
+                    <div class="section-header">
+                        <h2>Ações Rápidas</h2>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn-secondary" style="width: 100%; margin-bottom: 10px;">Gerenciar Serviços</button>
+                        <button class="btn-secondary" style="width: 100%;">Relatórios</button>
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <script>
+        // Inicializa os ícones da biblioteca Lucide
+        lucide.createIcons();
+    </script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

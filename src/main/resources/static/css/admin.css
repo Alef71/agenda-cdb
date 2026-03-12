@@ -1,0 +1,262 @@
+/* RESET E VARIÁVEIS */
+:root {
+    --bg-dark: #312E38;
+    --bg-panel: #28262E;
+    --bg-card: #3E3B47;
+    --text-white: #F4EDE8;
+    --text-gray: #999591;
+    --text-dark: #232129;
+    --gold: #D4AF37;
+    --gold-hover: #b5952f;
+    --success: #2e8b57; /* Verde para aprovar */
+    --danger: #c53030;  /* Vermelho para recusar */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto Slab', serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ==================== HEADER (Herdado do Padrão) ==================== */
+.header {
+    background-color: var(--bg-panel);
+    padding: 32px 0;
+}
+
+.header-content {
+    max-width: 1120px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+.logo-container h2 { color: var(--text-white); font-weight: 500; }
+.logo-container h2 span { color: var(--gold); font-weight: 600; margin-right: 5px; }
+
+.profile-container { display: flex; align-items: center; gap: 80px; }
+.profile { display: flex; align-items: center; gap: 16px; }
+.profile img { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: var(--bg-card); }
+.profile div { display: flex; flex-direction: column; }
+.profile span { color: var(--text-gray); font-size: 14px; }
+.profile strong { color: var(--gold); font-size: 16px; font-weight: 500; }
+
+.logout-btn { background: transparent; border: none; color: var(--text-gray); cursor: pointer; transition: color 0.2s; }
+.logout-btn:hover { color: var(--text-white); }
+
+/* ==================== LAYOUT DO ADMIN ==================== */
+.admin-container {
+    max-width: 1120px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.admin-header-title {
+    margin-bottom: 40px;
+}
+
+.admin-header-title h1 {
+    font-size: 32px;
+    font-weight: 500;
+}
+
+.admin-header-title p {
+    color: var(--gold);
+    margin-top: 8px;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 40px;
+}
+
+/* ==================== SEÇÕES E CARDS ==================== */
+.admin-section {
+    margin-bottom: 40px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--bg-card);
+}
+
+.section-header h2 {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--text-gray);
+}
+
+.badge {
+    background: var(--gold);
+    color: var(--text-dark);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.section-desc {
+    color: var(--text-gray);
+    font-size: 14px;
+    margin-bottom: 24px;
+}
+
+.btn-icon {
+    background: transparent;
+    border: none;
+    color: var(--gold);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-icon:hover {
+    color: var(--text-white);
+}
+
+/* CARDS DE APROVAÇÃO (Pendentes) */
+.admin-card {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.avatar-placeholder {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--bg-panel);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-gray);
+}
+
+.user-info strong {
+    display: block;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text-white);
+}
+
+.user-info span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-gray);
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.user-info span i {
+    width: 14px;
+    height: 14px;
+}
+
+/* BOTÕES DE AÇÃO (Aprovar/Recusar) */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.action-buttons button {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+
+.action-buttons button:hover {
+    filter: brightness(1.2);
+}
+
+.btn-approve {
+    background: var(--success);
+    color: white;
+}
+
+.btn-reject {
+    background: transparent;
+    border: 2px solid var(--danger) !important;
+    color: var(--danger);
+}
+
+/* EQUIPE ATIVA E RESUMO */
+.team-member {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+}
+
+.team-member img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--bg-card);
+}
+
+.team-member strong {
+    display: block;
+    font-weight: 500;
+}
+
+.team-member span {
+    color: var(--text-gray);
+    font-size: 14px;
+}
+
+.service-summary {
+    background: var(--bg-card);
+    border-radius: 10px;
+    padding: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.service-summary:hover {
+    background: #4e4b57;
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: var(--gold);
+    font-weight: 500;
+}
+
+/* Responsividade Básica */
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}

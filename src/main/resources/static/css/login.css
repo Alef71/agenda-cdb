@@ -1,0 +1,174 @@
+/* RESET E VARIÁVEIS (Mesma paleta da Agenda) */
+:root {
+    --bg-dark: #312E38;
+    --bg-input: #232129;
+    --text-white: #F4EDE8;
+    --text-gray: #666360;
+    --text-dark: #232129;
+    --gold: #D4AF37;
+    --gold-hover: #b5952f;
+    --error-red: #c53030;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto Slab', serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* CONTAINER PRINCIPAL */
+.auth-container {
+    min-height: 100vh; /* Alterado para min-height para caber o form de cadastro */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px; /* Margem extra caso a tela seja pequena */
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 340px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* LOGO */
+.logo-container {
+    margin-bottom: 40px;
+}
+
+.logo-container h2 {
+    color: var(--text-white);
+    font-weight: 500;
+    font-size: 32px;
+}
+
+.logo-container h2 span {
+    color: var(--gold);
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+/* TÍTULO DO FORMULÁRIO */
+.auth-card h1 {
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 24px;
+}
+
+/* FORMULÁRIOS (Login e Cadastro) */
+.auth-card form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group {
+    background: var(--bg-input);
+    border-radius: 10px;
+    border: 2px solid var(--bg-input);
+    padding: 16px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    color: var(--text-gray);
+    transition: border-color 0.2s, color 0.2s;
+}
+
+/* Efeito ao clicar no input (foco) */
+.input-group:focus-within {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.input-group i {
+    margin-right: 16px;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0; /* Impede o ícone de amassar */
+}
+
+.input-group input {
+    background: transparent;
+    border: none;
+    flex: 1;
+    color: var(--text-white);
+    font-size: 16px;
+    outline: none; /* Remove a borda padrão do navegador */
+}
+
+.input-group input::placeholder {
+    color: var(--text-gray);
+}
+
+/* BOTÃO ENTRAR / CADASTRAR */
+.btn-primary {
+    background: var(--gold);
+    color: var(--text-dark);
+    border-radius: 10px;
+    border: 0;
+    padding: 16px;
+    width: 100%;
+    font-weight: 500;
+    font-size: 16px;
+    margin-top: 16px;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--gold-hover);
+}
+
+/* Efeito de carregando (Desabilitado) */
+.btn-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* LINKS */
+.forgot-password {
+    color: var(--text-white);
+    text-decoration: none;
+    margin-top: 24px;
+    transition: color 0.2s;
+}
+
+.forgot-password:hover {
+    color: var(--gold);
+}
+
+.create-account {
+    color: var(--gold);
+    text-decoration: none;
+    margin-top: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: color 0.2s;
+}
+
+.create-account:hover {
+    color: var(--gold-hover);
+}
+
+.create-account i {
+    width: 20px;
+    height: 20px;
+}
+
+/* UTILITIES (Para alternar as telas no JS) */
+.hidden {
+    display: none !important;
+}

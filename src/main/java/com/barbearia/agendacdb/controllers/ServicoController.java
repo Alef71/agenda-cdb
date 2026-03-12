@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.barbearia.agendacdb.models.Servico;
+import com.barbearia.agendacdb.models.ServicoCatalogo;
 import com.barbearia.agendacdb.services.ServicoService;
 
 @RestController
@@ -25,23 +25,33 @@ public class ServicoController {
     private ServicoService servicoService;
 
     @PostMapping
-    public ResponseEntity<Servico> criar(@RequestBody Servico servico) {
-        return ResponseEntity.ok(servicoService.criarServico(servico));
+    public ResponseEntity<ServicoCatalogo> criar(@RequestBody ServicoCatalogo servico) {
+        return ResponseEntity.ok(servicoService.salvar(servico));
     }
 
     @GetMapping
-    public ResponseEntity<List<Servico>> listar() {
+    public ResponseEntity<List<ServicoCatalogo>> listar() {
         return ResponseEntity.ok(servicoService.listarTodos());
     }
 
     @PutMapping("/{id}/preco")
-    public ResponseEntity<Servico> atualizarPreco(@PathVariable UUID id, @RequestBody Servico dados) {
-        return ResponseEntity.ok(servicoService.atualizarPreco(id, dados.getPrecoBase()));
+    public ResponseEntity<ServicoCatalogo> atualizarPreco(@PathVariable UUID id, @RequestBody ServicoCatalogo dados) {
+        return ResponseEntity.ok(servicoService.atualizarPreco(id, dados.getValorBase()));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletar(@PathVariable UUID id) {
-        servicoService.deletarServico(id);
+        servicoService.deletar(id);
         return ResponseEntity.ok("Serviço removido com sucesso!");
+    }
+
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<ServicoCatalogo> atualizarServico(
+            @PathVariable UUID id, 
+            @RequestBody ServicoCatalogo dadosAtualizados) {
+        
+        ServicoCatalogo servicoAtualizado = servicoService.atualizar(id, dadosAtualizados);
+        return ResponseEntity.ok(servicoAtualizado);
     }
 }

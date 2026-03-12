@@ -41,17 +41,22 @@ public class Agendamento {
     @Column(nullable = false)
     private LocalDateTime dataHoraInicio;
 
+    private LocalDateTime dataHoraFim;
+
     private Integer quantidadeBlocos = 1;
 
     @Enumerated(EnumType.STRING)
-    private StatusAgendamento status;
+    private StatusAgendamento status = StatusAgendamento.AGENDADO;
 
     private BigDecimal valorCobrado;
 
     @Enumerated(EnumType.STRING)
-    private FormaPagamento formaPagamento;
+private FormaPagamento formaPagamento;
 
     private Boolean isPausa = false; 
+
+    @Column(columnDefinition = "TEXT")
+    private String observacao;
 
     public Agendamento() {}
 
@@ -76,6 +81,9 @@ public class Agendamento {
     public LocalDateTime getDataHoraInicio() { return dataHoraInicio; }
     public void setDataHoraInicio(LocalDateTime dataHoraInicio) { this.dataHoraInicio = dataHoraInicio; }
 
+    public LocalDateTime getDataHoraFim() { return dataHoraFim; }
+    public void setDataHoraFim(LocalDateTime dataHoraFim) { this.dataHoraFim = dataHoraFim; }
+
     public Integer getQuantidadeBlocos() { return quantidadeBlocos; }
     public void setQuantidadeBlocos(Integer quantidadeBlocos) { this.quantidadeBlocos = quantidadeBlocos; }
 
@@ -90,4 +98,7 @@ public class Agendamento {
 
     public Boolean getIsPausa() { return isPausa; }
     public void setIsPausa(Boolean isPausa) { this.isPausa = isPausa; }
+
+    public String getObservacao() { return observacao; }
+    public void setObservacao(String observacao) { this.observacao = observacao; }
 }

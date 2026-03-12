@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CDB Barbearia</title>
+
+    <link rel="stylesheet" href="css/agenda.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <aside class="sidebar">
+        <div class="logo">
+            <h2><span>CDB</span> Barbearia</h2>
+        </div>
+
+        <nav class="menu-opcoes">
+            <ul>
+                <li>
+                    <a href="#" class="ativo">
+                        <i data-lucide="calendar"></i>
+                        Agenda
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="btn-novo-cliente">
+                        <i data-lucide="user-plus"></i>
+                        Clientes
+                    </a>
+                </li>
+                <li>
+                    <a href="#" id="btn-configurar-servicos">
+                        <i data-lucide="scissors"></i>
+                        Serviços
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="conteudo-principal">
+
+        <header class="header">
+            <div class="header-content">
+                <div class="profile-container">
+                    <div class="profile">
+                        <img id="foto-perfil" style="cursor: pointer;" onclick="abrirModal('modal-editar-perfil')" title="Editar Perfil">
+                        <div>
+                            <span>Bem vindo</span>
+                            <strong id="nome-barbeiro"></strong>
+                            <div style="font-size: 13px; margin-top: 4px; display: flex; gap: 10px;">
+                                <a href="#" onclick="abrirModal('modal-editar-perfil')" style="color: #666; text-decoration: none; display: flex; align-items: center; gap: 3px;">
+                                    <i data-lucide="edit-2" style="width: 12px; height: 12px;"></i> Perfil
+                                </a>
+                                <a href="#" onclick="abrirModal('modal-editar-senha')" style="color: #666; text-decoration: none; display: flex; align-items: center; gap: 3px;">
+                                    <i data-lucide="key" style="width: 12px; height: 12px;"></i> Senha
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="btn-sair" class="logout-btn">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard-container">
+            <section class="schedule">
+                <h1>Agenda</h1>
+                <div class="date-info" id="data-atual"></div>
+                <button id="btn-abrir-modal" class="btn-principal">
+                    + Novo horário
+                </button>
+                <div id="container-proximo"></div>
+            </section>
+
+            <div class="calendar-container">
+                <div class="calendar-box">
+                    <div class="calendar-header">
+                        <button>
+                            <i data-lucide="chevron-left"></i>
+                        </button>
+                        <strong id="mes-calendario"></strong>
+                        <button>
+                            <i data-lucide="chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="calendar-grid days-name">
+                        <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
+                    </div>
+                    <div class="calendar-grid days-numbers" id="dias-calendario"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div id="modal-agendamento" class="modal">
+    <div class="modal-content">
+        <h2>Novo Agendamento</h2>
+        <form id="form-agendamento">
+            <input type="hidden" id="id-cliente-selecionado">
+            <input type="text" id="nome-cliente" placeholder="Cliente">
+            <ul id="lista-clientes-dropdown" class="dropdown-clientes"></ul>
+            <input type="text" id="telefone-cliente" placeholder="Telefone">
+            <select id="select-servico"></select>
+            <input type="date" id="data-agendamento">
+            <input type="time" id="hora-agendamento">
+            <button type="submit">Salvar</button>
+            <button type="button" id="btn-fechar-modal">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+<div id="modal-cliente" class="modal">
+    <div class="modal-content">
+        <h2>Novo Cliente</h2>
+        <form id="form-cliente">
+            <input id="novo-cliente-nome" placeholder="Nome">
+            <input id="novo-cliente-whatsapp" placeholder="Whatsapp">
+            <input type="file" id="novo-cliente-foto">
+            <button type="submit">Salvar</button>
+            <button type="button" id="btn-fechar-modal-cliente">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+<div id="modal-pagamento" class="modal">
+    <div class="modal-content">
+        <h2>Finalizar Atendimento</h2>
+        <form id="form-pagamento">
+            <input type="hidden" id="id-agendamento-pagamento">
+            <input id="valor-final" placeholder="Valor">
+            <select id="forma-pagamento">
+                <option>PIX</option>
+                <option>Cartão</option>
+                <option>Dinheiro</option>
+            </select>
+            <button type="submit">Finalizar</button>
+            <button type="button" id="btn-fechar-modal-pagamento">Cancelar</button>
+        </form>
+    </div>
+</div>
+
+<div id="modal-config-servicos" class="modal">
+    <div class="modal-content">
+        <h2>Gerenciar Serviços</h2>
+        <form id="form-novo-servico">
+            <input id="novo-nome-servico" placeholder="Nome do serviço">
+            <input id="novo-preco-servico" placeholder="Preço">
+            <button type="submit">Adicionar</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>Serviço</th>
+                    <th>Preço</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-lista-servicos"></tbody>
+        </table>
+        <button id="btn-fechar-config">Fechar</button>
+    </div>
+</div>
+
+<div id="modal-editar-perfil" class="modal">
+    <div class="modal-content">
+        <button class="btn-fechar-modal" onclick="fecharModal('modal-editar-perfil')">&times;</button>
+        
+        <h2>Editar Meu Perfil</h2>
+        
+        <form id="form-editar-perfil" onsubmit="salvarPerfil(event)">
+            <label for="perfil-nome">Nome:</label>
+            <input type="text" id="perfil-nome" placeholder="Seu nome" required>
+            
+            <label for="perfil-whatsapp">WhatsApp:</label>
+            <input type="text" id="perfil-whatsapp" placeholder="Ex: 11999999999">
+            
+            <label for="perfil-foto">Foto de Perfil:</label>
+            <input type="file" id="perfil-foto" accept="image/*">
+            
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="submit" class="btn-principal" style="width: 100%; margin-bottom: 0;">Salvar</button>
+                <button type="button" onclick="fecharModal('modal-editar-perfil')" style="width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; background: #444; color: #fff; font-weight: 600;">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modal-editar-senha" class="modal">
+    <div class="modal-content">
+        <button class="btn-fechar-modal" onclick="fecharModal('modal-editar-senha')">&times;</button>
+        
+        <h2>Redefinir Senha</h2>
+        
+        <form id="form-editar-senha" onsubmit="event.preventDefault(); salvarSenha();">
+            <label for="senha-antiga">Senha Atual:</label>
+            <input type="password" id="senha-antiga" placeholder="Digite a senha atual" required>
+            
+            <label for="nova-senha">Nova Senha:</label>
+            <input type="password" id="nova-senha" placeholder="Digite a nova senha" required>
+            
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="submit" class="btn-principal" style="width: 100%; margin-bottom: 0;">Atualizar</button>
+                <button type="button" onclick="fecharModal('modal-editar-senha')" style="width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; background: #444; color: #fff; font-weight: 600;">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="modal-editar-servico" class="modal">
+    <div class="modal-content">
+        <button class="btn-fechar-modal" onclick="fecharModal('modal-editar-servico')">&times;</button>
+        
+        <h2>Editar Serviço</h2>
+        
+        <form id="form-editar-servico" onsubmit="event.preventDefault(); salvarEdicaoServico();">
+            <input type="hidden" id="edit-servico-id">
+            
+            <label for="edit-servico-nome">Nome do Serviço:</label>
+            <input type="text" id="edit-servico-nome" required>
+            
+            <label for="edit-servico-valor">Valor Base (R$):</label>
+            <input type="number" id="edit-servico-valor" step="0.01" required>
+            
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button type="submit" class="btn-principal" style="width: 100%; margin-bottom: 0;">Salvar</button>
+                <button type="button" onclick="fecharModal('modal-editar-servico')" style="width: 100%; padding: 10px; border: none; border-radius: 5px; cursor: pointer; background: #444; color: #fff; font-weight: 600;">Cancelar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="js/agenda.js"></script>
+<script>
+    lucide.createIcons();
+</script>
+
+</body>
+</html>

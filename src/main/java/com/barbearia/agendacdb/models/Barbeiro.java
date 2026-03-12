@@ -29,7 +29,7 @@ public class Barbeiro {
     @Column(nullable = false, unique = true)
     private String cpf;
 
-   private String whatsapp;
+    private String whatsapp;
    
     @JsonIgnore
     @Column(nullable = false)
@@ -41,6 +41,7 @@ public class Barbeiro {
     @Enumerated(EnumType.STRING)
     private StatusAprovacao status;
 
+    @Column(name = "foto_url", columnDefinition = "TEXT")
     private String fotoUrl;
 
     
