@@ -16,12 +16,10 @@ public class ServicoService {
     @Autowired
     private ServicoRepository servicoRepository;
 
-    // NOVO MÉTODO PARA ATUALIZAR O SERVIÇO COMPLETO
     public ServicoCatalogo atualizar(UUID id, ServicoCatalogo dadosAtualizados) {
         ServicoCatalogo servico = servicoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
 
-        // Atualizando apenas os campos que existem na entidade ServicoCatalogo
         servico.setNomeServico(dadosAtualizados.getNomeServico());
         servico.setValorBase(dadosAtualizados.getValorBase());
 

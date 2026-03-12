@@ -10,10 +10,6 @@ import com.barbearia.agendacdb.models.Cliente;
 
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, UUID> {
-    
-    // Lista TODOS os clientes cadastrados que pertencem a um barbeiro específico
     List<Cliente> findAllByBarbeiroId(UUID barbeiroId);
-
-    // Bônus: Busca clientes por parte do nome, mas restrito ao barbeiro (perfeito para um campo de busca)
     List<Cliente> findByNomeContainingIgnoreCaseAndBarbeiroId(String nome, UUID barbeiroId);
 }

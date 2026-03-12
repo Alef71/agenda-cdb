@@ -1,174 +1,308 @@
-/* RESET E VARIÁVEIS (Mesma paleta da Agenda) */
-:root {
-    --bg-dark: #312E38;
-    --bg-input: #232129;
-    --text-white: #F4EDE8;
-    --text-gray: #666360;
-    --text-dark: #232129;
-    --gold: #D4AF37;
-    --gold-hover: #b5952f;
-    --error-red: #c53030;
+/* ----------------------------------------------------------- */
+/* RESET E VARIÁVEIS                                           */
+/* ----------------------------------------------------------- */
+
+:root{
+    --gold:#D4AF37;
+    --gold-hover:#b9972f;
+    --text-white:#F4EDE8;
+    --text-gray:#999591;
+    --dark:#11131f;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Roboto Slab', serif;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Roboto Slab', serif;
 }
 
-body {
-    background-color: var(--bg-dark);
-    color: var(--text-white);
-    -webkit-font-smoothing: antialiased;
+body{
+    background:#0f1118;
+    color:var(--text-white);
+    height:100vh;
 }
 
-/* CONTAINER PRINCIPAL */
-.auth-container {
-    min-height: 100vh; /* Alterado para min-height para caber o form de cadastro */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px; /* Margem extra caso a tela seja pequena */
+/* ----------------------------------------------------------- */
+/* WRAPPER                                                     */
+/* ----------------------------------------------------------- */
+
+.auth-wrapper{
+    display:flex;
+    height:100vh;
 }
 
-.auth-card {
-    width: 100%;
-    max-width: 340px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+/* ----------------------------------------------------------- */
+/* LADO ESQUERDO (BANNER)                                      */
+/* ----------------------------------------------------------- */
+
+.auth-side-banner{
+    flex:1.2;
+    background:
+    linear-gradient(rgba(0,0,0,0.55),rgba(0,0,0,0.65)),
+    url('../imagens/lado-a.jpeg');
+    background-size:cover;
+    background: position 10%;;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-right:1px solid rgba(212,175,55,0.3);
+}
+
+.banner-content{
+    text-align:center;
+    max-width:400px;
 }
 
 /* LOGO */
-.logo-container {
-    margin-bottom: 40px;
-}
 
-.logo-container h2 {
-    color: var(--text-white);
-    font-weight: 500;
-    font-size: 32px;
-}
+.logo-img{
+    width:400px;
+    height:400px;
 
-.logo-container h2 span {
-    color: var(--gold);
-    font-weight: 600;
-    margin-right: 5px;
-}
+    object-fit:cover;
 
-/* TÍTULO DO FORMULÁRIO */
-.auth-card h1 {
-    font-size: 24px;
-    font-weight: 500;
-    margin-bottom: 24px;
-}
+    border-radius:50%;
+    border:4px solid var(--gold);
 
-/* FORMULÁRIOS (Login e Cadastro) */
-.auth-card form {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.input-group {
-    background: var(--bg-input);
-    border-radius: 10px;
-    border: 2px solid var(--bg-input);
-    padding: 16px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    color: var(--text-gray);
-    transition: border-color 0.2s, color 0.2s;
-}
-
-/* Efeito ao clicar no input (foco) */
-.input-group:focus-within {
-    border-color: var(--gold);
-    color: var(--gold);
-}
-
-.input-group i {
-    margin-right: 16px;
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0; /* Impede o ícone de amassar */
-}
-
-.input-group input {
+    padding:0;
     background: transparent;
-    border: none;
-    flex: 1;
-    color: var(--text-white);
-    font-size: 16px;
-    outline: none; /* Remove a borda padrão do navegador */
+
+    background:#0b0b0f;
+
+    box-shadow:0 0 30px rgba(0,0,0,0.6);
+
+    margin-bottom:40px;
 }
 
-.input-group input::placeholder {
-    color: var(--text-gray);
+/* FRASE */
+
+.frase-efeito{
+    font-size:36px;
+    line-height:1.2;
+    font-weight:500;
 }
 
-/* BOTÃO ENTRAR / CADASTRAR */
-.btn-primary {
-    background: var(--gold);
-    color: var(--text-dark);
-    border-radius: 10px;
-    border: 0;
-    padding: 16px;
-    width: 100%;
-    font-weight: 500;
-    font-size: 16px;
-    margin-top: 16px;
-    cursor: pointer;
-    transition: background 0.2s, opacity 0.2s;
+/* ----------------------------------------------------------- */
+/* LADO DIREITO (FORM)                                         */
+/* ----------------------------------------------------------- */
+
+.auth-side-form{
+
+    flex:1;
+
+    background:
+    linear-gradient(rgba(12,12,16,0.92),rgba(12,12,16,0.95)),
+    url('../imagens/lado-a.jpeg');
+
+    background-size:cover;
+    background-position:center;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    position:relative;
 }
 
-.btn-primary:hover:not(:disabled) {
-    background: var(--gold-hover);
+/* ----------------------------------------------------------- */
+/* CARD                                                        */
+/* ----------------------------------------------------------- */
+
+.auth-card{
+
+    position:absolute;
+
+    width:100%;
+    max-width:420px;
+
+    padding:50px 40px;
+
+    background:rgba(10,10,14,0.80);
+
+    border-radius:12px;
+
+    backdrop-filter: blur(6px);
+
+    box-shadow:0 10px 40px rgba(0,0,0,0.6);
 }
 
-/* Efeito de carregando (Desabilitado) */
-.btn-primary:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
+/* ----------------------------------------------------------- */
+/* TEXTO SUPERIOR                                              */
+/* ----------------------------------------------------------- */
+
+.header-text{
+    text-align:center;
+    margin-bottom:40px;
 }
 
-/* LINKS */
-.forgot-password {
-    color: var(--text-white);
-    text-decoration: none;
-    margin-top: 24px;
-    transition: color 0.2s;
+.header-text h2{
+    font-size:32px;
+    font-weight:600;
 }
 
-.forgot-password:hover {
-    color: var(--gold);
+.header-text h2 span{
+    color:var(--gold);
 }
 
-.create-account {
-    color: var(--gold);
-    text-decoration: none;
-    margin-top: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: color 0.2s;
+.header-text p{
+    margin-top:8px;
+    color:var(--text-gray);
+    font-size:15px;
 }
 
-.create-account:hover {
-    color: var(--gold-hover);
+/* ----------------------------------------------------------- */
+/* FORM                                                        */
+/* ----------------------------------------------------------- */
+
+.auth-card form{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
 }
 
-.create-account i {
-    width: 20px;
-    height: 20px;
+/* INPUT */
+
+.input-group{
+
+    display:flex;
+    align-items:center;
+
+    padding:16px;
+
+    border-radius:6px;
+
+    background:#0f0f14;
+
+    border:1px solid #1c1c24;
+
+    transition:0.2s;
 }
 
-/* UTILITIES (Para alternar as telas no JS) */
-.hidden {
-    display: none !important;
+.input-group:focus-within{
+    border-color:var(--gold);
+}
+
+.input-group i{
+    margin-right:12px;
+    color:#777;
+}
+
+.input-group input{
+
+    flex:1;
+
+    border:none;
+    outline:none;
+
+    background:none;
+
+    color:white;
+
+    font-size:15px;
+}
+
+/* ----------------------------------------------------------- */
+/* BOTÃO                                                       */
+/* ----------------------------------------------------------- */
+
+.btn-primary{
+
+    margin-top:18px;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:6px;
+
+    font-weight:700;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+
+    cursor:pointer;
+
+    background:linear-gradient(90deg,#e3c05a,#caa037);
+
+    color:#1a1a1a;
+
+    transition:0.2s;
+}
+
+.btn-primary:hover{
+    background:linear-gradient(90deg,#f1cf68,#b9972f);
+}
+
+/* ----------------------------------------------------------- */
+/* LINKS                                                       */
+/* ----------------------------------------------------------- */
+
+.forgot-password{
+
+    display:block;
+
+    text-align:center;
+
+    margin-top:24px;
+
+    color:var(--text-gray);
+
+    text-decoration:none;
+
+    font-size:14px;
+}
+
+.forgot-password:hover{
+    color:var(--gold);
+}
+
+.create-account{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-top:30px;
+
+    color:var(--gold);
+
+    text-decoration:none;
+
+    font-weight:500;
+}
+
+.create-account:hover{
+    color:var(--gold-hover);
+}
+
+/* ----------------------------------------------------------- */
+/* UTILIDADE                                                   */
+/* ----------------------------------------------------------- */
+
+.hidden{
+    display:none !important;
+}
+
+/* ----------------------------------------------------------- */
+/* RESPONSIVO                                                  */
+/* ----------------------------------------------------------- */
+
+@media(max-width:900px){
+
+.auth-side-banner{
+display:none;
+}
+
+.auth-side-form{
+flex:1;
+}
+
 }

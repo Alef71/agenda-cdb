@@ -165,6 +165,31 @@ async function salvarEdicaoServico() {
     } catch (error) { console.error("Erro:", error); }
 }
 
+// ==========================================
+// FUNÇÃO GLOBAL DE EXCLUSÃO DE CLIENTE
+// ==========================================
+window.excluirCliente = async function(id) {
+    if (!confirm("Tem certeza que deseja apagar este cliente do sistema?")) return;
+    
+    const token = getAuthToken();
+    try {
+        const response = await fetch(`http://localhost:8080/api/clientes/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            alert("Cliente excluído com sucesso!");
+            window.dispatchEvent(new CustomEvent('carregarClientesEvent')); // Recarrega a lista
+        } else {
+            alert("Erro ao excluir. Este cliente pode ter agendamentos vinculados.");
+        }
+    } catch(e) {
+        console.error(e);
+        alert("Erro de conexão ao tentar excluir o cliente.");
+    }
+}
+
 
 // ==========================================
 // INICIALIZAÇÃO E EVENTOS DOM
@@ -198,7 +223,39 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // ==========================================
+    // LÓGICA DE CLIENTES
+    // ==========================================
     let listaClientesGlobal = [];
+    const tabelaListaClientesDOM = document.getElementById('tabela-lista-clientes');
+    const inputPesquisaClienteLista = document.getElementById('pesquisa-cliente-lista');
+
+    function renderizarTabelaClientes(clientes) {
+        if (!tabelaListaClientesDOM) return;
+        tabelaListaClientesDOM.innerHTML = '';
+
+        if (clientes.length === 0) {
+            tabelaListaClientesDOM.innerHTML = '<tr><td colspan="3" style="text-align: center; padding: 15px; color: #999;">Nenhum cliente encontrado.</td></tr>';
+            return;
+        }
+
+        clientes.forEach(cliente => {
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = "1px solid #444";
+            
+            const nome = cliente.nome || 'Sem nome';
+            const telefone = cliente.telefone || cliente.whatsapp || 'Sem número';
+            
+            tr.innerHTML = `
+                <td style="padding: 10px 0; color: #fff;">${nome}</td>
+                <td style="padding: 10px 0; color: #ccc;">${telefone}</td>
+                <td style="padding: 10px 0; text-align: right;">
+                    <button type="button" onclick="window.excluirCliente('${cliente.id}')" style="background: #ff4c4c; color: white; border: none; padding: 4px 8px; cursor: pointer; border-radius: 4px; font-weight: bold;">Excluir</button>
+                </td>
+            `;
+            tabelaListaClientesDOM.appendChild(tr);
+        });
+    }
 
     async function carregarClientes() {
         try {
@@ -207,6 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }); 
             if (response.ok) {
                 listaClientesGlobal = await response.json();
+                renderizarTabelaClientes(listaClientesGlobal);
             }
         } catch (error) {
             console.error("Erro ao carregar clientes do banco:", error);
@@ -214,8 +272,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     window.addEventListener('carregarClientesEvent', carregarClientes);
-    carregarClientes();
+    carregarClientes(); // Carrega ao iniciar a página
 
+    // Filtro da lista de clientes (Modal)
+    if (inputPesquisaClienteLista) {
+        inputPesquisaClienteLista.addEventListener('input', (e) => {
+            const termoBusca = e.target.value.toLowerCase();
+            const clientesFiltrados = listaClientesGlobal.filter(c => 
+                c.nome && c.nome.toLowerCase().includes(termoBusca)
+            );
+            renderizarTabelaClientes(clientesFiltrados);
+        });
+    }
+
+    // Autocomplete do input de Novo Agendamento
     const inputNomeCliente = document.getElementById('nome-cliente');
     const inputTelefone = document.getElementById('telefone-cliente');
     const inputIdCliente = document.getElementById('id-cliente-selecionado');
@@ -264,14 +334,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Modal de Novo Cliente
     const btnNovoCliente = document.getElementById('btn-novo-cliente');
     const btnFecharModalCliente = document.getElementById('btn-fechar-modal-cliente');
     const formCliente = document.getElementById('form-cliente');
 
-    if (btnNovoCliente) {
-        btnNovoCliente.addEventListener('click', () => abrirModal('modal-cliente'));
-    }
-
+    // Aqui não abrimos mais o modal de cliente direto no menu lateral, mas sim pela lista
     if (btnFecharModalCliente) {
         btnFecharModalCliente.addEventListener('click', () => {
             fecharModal('modal-cliente');
@@ -319,7 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     alert("Cliente cadastrado com sucesso!");
                     fecharModal('modal-cliente');
                     formCliente.reset();
-                    carregarClientes(); 
+                    carregarClientes(); // Atualiza as listas globais e da tabela
                 } else {
                     alert("Erro ao cadastrar cliente: " + await response.text());
                 }

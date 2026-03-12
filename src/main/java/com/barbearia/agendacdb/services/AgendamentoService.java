@@ -124,7 +124,6 @@ public class AgendamentoService {
         return faturamento;
     }
 
-    // --- NOVO MÉTODO ADICIONADO AQUI ---
     @Transactional
     public void excluirAgendamento(UUID id) {
         if (!agendamentoRepository.existsById(id)) {

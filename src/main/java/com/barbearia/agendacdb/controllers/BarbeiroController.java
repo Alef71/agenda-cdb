@@ -29,18 +29,15 @@ public class BarbeiroController {
     @Autowired
     private BarbeiroRepository repository;
 
-    // --- AQUI ESTÁ A INJEÇÃO DO PASSWORD ENCODER ---
     @Autowired
     private PasswordEncoder passwordEncoder; 
 
-    // Retorna todos os barbeiros para o Admin ver
     @GetMapping
     public ResponseEntity<List<Barbeiro>> listarTodos() {
         List<Barbeiro> barbeiros = repository.findAll();
         return ResponseEntity.ok(barbeiros);
     }
 
-    // Rota para deletar/recusar um barbeiro usando UUID
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable UUID id) { 
         if (!repository.existsById(id)) {
@@ -50,7 +47,6 @@ public class BarbeiroController {
         return ResponseEntity.noContent().build();
     }
 
-    // Rota para APROVAR o barbeiro (muda o status dele)
     @PutMapping("/{id}/aprovar")
     public ResponseEntity<Barbeiro> aprovar(@PathVariable UUID id) {
         Optional<Barbeiro> barbeiroOptional = repository.findById(id);
@@ -66,11 +62,6 @@ public class BarbeiroController {
         return ResponseEntity.ok(barbeiro);
     }
 
-    // ==========================================
-    // NOVAS ROTAS (FASE 2)
-    // ==========================================
-
-    // Rota para o barbeiro editar NOME, WHATSAPP e FOTO
     @PutMapping("/{id}/perfil")
     public ResponseEntity<Barbeiro> atualizarPerfil(
             @PathVariable UUID id, 
@@ -89,7 +80,6 @@ public class BarbeiroController {
         return ResponseEntity.ok(repository.save(barbeiro));
     }
 
-    // Rota para o barbeiro redefinir a SENHA
     @PatchMapping("/{id}/senha")
     public ResponseEntity<String> redefinirSenha(
             @PathVariable UUID id, 
@@ -101,13 +91,10 @@ public class BarbeiroController {
         }
 
         Barbeiro barbeiro = barbeiroOptional.get();
-        
-        // CORREÇÃO: Usando o passwordEncoder para comparar a senha digitada com a do banco
         if (!passwordEncoder.matches(dto.senhaAntiga, barbeiro.getSenha())) {
             return ResponseEntity.badRequest().body("Senha antiga incorreta!");
         }
 
-        // CORREÇÃO: Criptografando a NOVA senha antes de salvar no banco
         barbeiro.setSenha(passwordEncoder.encode(dto.novaSenha)); 
         repository.save(barbeiro);
 

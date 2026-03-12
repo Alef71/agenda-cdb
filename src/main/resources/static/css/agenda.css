@@ -1,512 +1,382 @@
 /* ================= RESET ================= */
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-body{
-font-family:'Roboto Slab',serif;
-background:#121214;
-color:#fff;
+body {
+    font-family: 'Roboto Slab', serif;
+    background: #121214;
+    color: #fff;
 }
-
 
 /* ================= VARIÁVEIS ================= */
-
-:root{
-
---bg-main:#121214;
---bg-panel:#1e1e24;
---bg-card:#2a2a33;
-
---gold:#D4AF37;
---gold-hover:#b8962e;
-
---text-gray:#999;
---border:#2f2f37;
-
+:root {
+    --bg-main: #121214;
+    --bg-panel: #1e1e24;
+    --bg-card: rgba(30, 30, 36, 0.8);
+    --gold: #D4AF37;
+    --gold-hover: #b8962e;
+    --text-gray: #999;
+    --border: #2f2f37;
 }
-
 
 /* ================= LAYOUT ================= */
-
-.app-container{
-display:flex;
-min-height:100vh;
+.app-container {
+    display: flex;
+    min-height: 100vh;
 }
-
 
 /* ================= SIDEBAR ================= */
-
-.sidebar{
-
-width:240px;
-background:var(--bg-panel);
-padding:30px 20px;
-display:flex;
-flex-direction:column;
-border-right:1px solid var(--border);
-
+.sidebar {
+    width: 240px;
+    background: var(--bg-panel);
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    z-index: 10;
 }
 
-.logo h2{
-
-font-size:22px;
-text-align:center;
-margin-bottom:40px;
-
+.logo h2 {
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 40px;
 }
 
-.logo span{
-color:var(--gold);
+.logo span {
+    color: var(--gold);
 }
-
 
 /* ================= MENU ================= */
+.menu-opcoes ul { list-style: none; }
+.menu-opcoes li { margin-bottom: 10px; }
 
-.menu-opcoes ul{
-list-style:none;
+.menu-opcoes a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #aaa;
+    padding: 12px;
+    border-radius: 6px;
+    transition: 0.3s;
 }
 
-.menu-opcoes li{
-margin-bottom:10px;
+.menu-opcoes a:hover, .menu-opcoes a.ativo {
+    background: rgba(42, 42, 51, 0.5);
+    color: var(--gold);
 }
 
-.menu-opcoes a{
-
-display:flex;
-align-items:center;
-gap:10px;
-
-text-decoration:none;
-color:#aaa;
-
-padding:12px;
-border-radius:6px;
-
-transition:0.3s;
-
+/* ================= CONTEÚDO (IMAGEM LADO B) ================= */
+.conteudo-principal {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    
+    /* FUNDO LADO-B INSERIDO AQUI */
+    background-image: url('../imagens/lado-b.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
-
-.menu-opcoes a:hover{
-
-background:var(--bg-card);
-color:var(--gold);
-
-}
-
-.menu-opcoes a.ativo{
-
-background:var(--bg-card);
-color:var(--gold);
-
-}
-
-
-/* ================= CONTEÚDO ================= */
-
-.conteudo-principal{
-
-flex:1;
-display:flex;
-flex-direction:column;
-
-}
-
 
 /* ================= HEADER ================= */
-
-.header{
-
-background:var(--bg-panel);
-padding:20px;
-border-bottom:1px solid var(--border);
-
+.header {
+    background: var(--bg-panel);
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
 }
 
-.header-content{
-
-display:flex;
-justify-content:flex-end;
-
+.header-content {
+    display: flex;
+    justify-content: flex-end;
 }
 
-.profile-container{
-
-display:flex;
-align-items:center;
-gap:30px;
-
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
 }
 
-.profile{
-
-display:flex;
-align-items:center;
-gap:10px;
-
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.profile img{
-
-width:45px;
-height:45px;
-border-radius:50%;
-
+/* CORREÇÃO DO ROSTO GIGANTE: Forçando tamanho limite na imagem original do HTML */
+.profile img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--gold); /* Cor de fundo caso a foto demore a carregar */
 }
 
-.profile span{
-font-size:12px;
-color:var(--text-gray);
-}
-
-.profile strong{
-color:var(--gold);
-}
-
+.profile span { font-size: 12px; color: var(--text-gray); }
+.profile strong { color: var(--gold); }
 
 /* ================= LOGOUT ================= */
-
-.logout-btn{
-
-background:none;
-border:none;
-color:#aaa;
-cursor:pointer;
-
+.logout-btn {
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
 }
-
-.logout-btn:hover{
-color:#fff;
-}
-
+.logout-btn:hover { color: #fff; }
 
 /* ================= DASHBOARD ================= */
-
-.dashboard-container{
-
-display:flex;
-gap:80px;
-
-padding:40px;
-
+.dashboard-container {
+    display: flex;
+    gap: 80px;
+    padding: 40px;
+    /* Fundo escurecido para o texto dar leitura sobre a imagem lado-b */
+    background: rgba(0, 0, 0, 0.5); 
+    flex: 1;
 }
 
-
-/* ================= AGENDA ================= */
-
-.schedule{
-
-flex:1;
-
+/* ================= AGENDA (TÍTULOS E LOGO) ================= */
+.schedule {
+    position: relative;
+    flex: 1;
 }
 
-.schedule h1{
-
-font-size:32px;
-margin-bottom:10px;
-
+/* MÁGICA 1: Inserindo o logo.jpeg via CSS sem mexer no HTML */
+.schedule::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    background-image: url('../imagens/logo.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-color: #000;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 
-.date-info{
-
-color:var(--gold);
-margin-bottom:30px;
-
+/* Empurrando o H1 e a Data para a direita, dando espaço para o Logo */
+.schedule h1,
+.schedule .date-info {
+    padding-left: 170px; 
 }
 
-#container-proximo{
-
-margin-top:20px;
-
+.schedule h1 {
+    font-size: 38px;
+    margin-bottom: 5px;
+    min-height: 80px; /* Garante espaço para não sobrepor o logo */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-
-/* ================= BOTÃO ================= */
-
-.btn-principal{
-
-background:var(--gold);
-color:#000;
-
-border:none;
-
-padding:10px 20px;
-
-border-radius:6px;
-
-cursor:pointer;
-
-margin-bottom:20px;
-
-font-weight:600;
-
+/* MÁGICA 2: Inserindo o subtítulo via CSS */
+.schedule h1::after {
+    content: "Estilo e precisão no seu atendimento";
+    color: var(--gold);
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 5px;
 }
 
-.btn-principal:hover{
-
-background:var(--gold-hover);
-
+.schedule .date-info {
+    font-size: 18px;
+    color: #fff;
+    margin-bottom: 40px; 
+    min-height: 30px;
 }
 
+/* ================= BOTÃO E HORÁRIOS ================= */
+.btn-principal {
+    background: var(--gold);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.btn-principal:hover {
+    background: var(--gold-hover);
+}
+
+#container-proximo {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Estilo para os cards de horário que o seu JS vai criar dentro da div #container-proximo */
+#container-proximo > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: rgba(15, 15, 18, 0.85); /* Escuro com leve transparência */
+    border: 1px dotted var(--gold);
+    border-radius: 8px;
+    color: #bbb;
+    font-size: 15px;
+    transition: 0.3s;
+}
+
+#container-proximo > div:hover {
+    background: rgba(30, 30, 36, 0.9);
+    border-color: #fff;
+}
+
+#container-proximo > div strong {
+    color: #fff;
+}
 
 /* ================= CALENDÁRIO ================= */
-
-.calendar-container{
-
-width:320px;
-
+.calendar-container {
+    width: 320px;
 }
 
-.calendar-box{
-
-background:var(--bg-panel);
-padding:20px;
-border-radius:10px;
-
+.calendar-box {
+    background: rgba(25, 25, 30, 0.9);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
 }
 
-.calendar-header{
-
-display:flex;
-justify-content:space-between;
-align-items:center;
-
-margin-bottom:20px;
-
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.calendar-header button{
-
-background:none;
-border:none;
-color:#aaa;
-cursor:pointer;
-
+.calendar-header button {
+    background: none;
+    border: none;
+    color: #aaa;
+    cursor: pointer;
 }
 
-.calendar-header button:hover{
-
-color:#fff;
-
+.calendar-header button:hover {
+    color: #fff;
 }
 
-.calendar-grid{
-
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:8px;
-
-text-align:center;
-
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    text-align: center;
 }
 
-.days-name span{
-
-color:#777;
-font-size:14px;
-
+.days-name span {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 10px;
 }
 
-.days-numbers span{
-
-padding:10px;
-border-radius:8px;
-cursor:pointer;
-
+.days-numbers span {
+    padding: 8px 0;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
 }
 
-.days-numbers span:hover{
-
-background:var(--bg-card);
-
+.days-numbers span:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
-
-/* ================= MODAL ================= */
-
-.modal{
-
-position:fixed;
-top:0;
-left:0;
-
-width:100%;
-height:100%;
-
-background:rgba(0,0,0,0.6);
-
-display:none;
-justify-content:center;
-align-items:center;
-
-z-index:999;
-
+/* Classe pro dia ativo (quando o JS adicionar) */
+.days-numbers span.active, 
+.days-numbers span.selecionado {
+    background: var(--gold);
+    color: #000;
+    font-weight: bold;
 }
 
-.modal-content{
-
-background:var(--bg-panel);
-
-padding:30px;
-
-border-radius:10px;
-
-width:400px;
-
+/* ================= MODAIS (MANTIDOS ORIGINAIS) ================= */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
 }
 
-.modal-content h2{
-
-margin-bottom:20px;
-
+.modal-content {
+    background: var(--bg-panel);
+    padding: 30px;
+    border-radius: 10px;
+    width: 400px;
+    position: relative;
+    border: 1px solid var(--border);
 }
 
+.modal-content h2 { margin-bottom: 20px; }
 
-/* ================= FORM ================= */
-
-.modal-content form{
-
-display:flex;
-flex-direction:column;
-gap:12px;
-
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .modal-content input,
-.modal-content select{
-
-padding:10px;
-
-border:none;
-border-radius:5px;
-
-background:var(--bg-card);
-color:#fff;
-
+.modal-content select {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background: var(--bg-card);
+    color: #fff;
 }
 
-.modal-content button{
-
-padding:10px;
-
-border:none;
-border-radius:5px;
-
-cursor:pointer;
-
+.modal-content button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
 
-.modal-content button[type="submit"]{
-
-background:var(--gold);
-color:#000;
-
-font-weight:600;
-
+.modal-content button[type="submit"] {
+    background: var(--gold);
+    color: #000;
+    font-weight: 600;
 }
 
-.modal-content button[type="submit"]:hover{
+.modal-content button[type="submit"]:hover { background: var(--gold-hover); }
 
-background:var(--gold-hover);
-
+.dropdown-clientes {
+    display: none;
+    position: absolute;
+    background: var(--bg-card);
+    width: 100%;
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 5px;
+    border: 1px solid var(--gold);
 }
 
+.dropdown-clientes li { padding: 10px; cursor: pointer; }
+.dropdown-clientes li:hover { background: var(--gold); color: #000; }
 
-/* ================= DROPDOWN CLIENTES ================= */
-
-.dropdown-clientes{
-
-display:none;
-
-position:absolute;
-
-background:var(--bg-card);
-
-width:100%;
-
-max-height:150px;
-
-overflow-y:auto;
-
-border-radius:5px;
-
-border:1px solid var(--gold);
-
-}
-
-.dropdown-clientes li{
-
-padding:10px;
-cursor:pointer;
-
-}
-
-.dropdown-clientes li:hover{
-
-background:var(--gold);
-color:#000;
-
-}
-
-
-/* ================= TABELA SERVIÇOS ================= */
-
-table{
-
-width:100%;
-margin-top:20px;
-
-border-collapse:collapse;
-
-}
-
-th,td{
-
-padding:10px;
-
-text-align:left;
-
-}
-
-th{
-
-color:var(--gold);
-
-border-bottom:1px solid var(--border);
-
-}
-
-
-/* ================= RESPONSIVO ================= */
-
-@media(max-width:1000px){
-
-.dashboard-container{
-
-flex-direction:column;
-
-}
-
-.calendar-container{
-
-width:100%;
-
-}
-
-.sidebar{
-
-display:none;
-
-}
-/* ================= BOTÕES DE AÇÃO (TABELAS E AGENDA) ================= */
-
-/* Para garantir que o conteúdo do modal segure o botão de fechar no canto */
-.modal-content {
-    position: relative; 
-}
+table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+th, td { padding: 10px; text-align: left; }
+th { color: var(--gold); border-bottom: 1px solid var(--border); }
 
 .btn-fechar-modal {
     position: absolute;
@@ -520,10 +390,8 @@ display:none;
 
 .btn-fechar-modal:hover {
     color: #fff !important;
-    background: transparent !important;
 }
 
-/* Botões pequenos das tabelas */
 .btn-editar-servico {
     background: var(--gold);
     color: #000;
@@ -535,10 +403,7 @@ display:none;
     margin-right: 8px;
     transition: 0.3s;
 }
-
-.btn-editar-servico:hover {
-    background: var(--gold-hover);
-}
+.btn-editar-servico:hover { background: var(--gold-hover); }
 
 .btn-excluir-servico {
     background: #ff4c4c;
@@ -550,8 +415,11 @@ display:none;
     font-weight: 600;
     transition: 0.3s;
 }
+.btn-excluir-servico:hover { background: #e63939; }
 
-.btn-excluir-servico:hover {
-    background: #e63939;
-}
+/* ================= RESPONSIVO ================= */
+@media(max-width: 1000px) {
+    .dashboard-container { flex-direction: column; }
+    .calendar-container { width: 100%; }
+    .sidebar { display: none; }
 }

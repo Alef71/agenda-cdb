@@ -34,7 +34,6 @@ public class ClienteService {
         clienteExistente.setNome(dadosAtualizados.getNome());
         clienteExistente.setTelefone(dadosAtualizados.getTelefone());
         
-        // Só atualiza a foto se vier uma nova
         if (dadosAtualizados.getFotoPerfil() != null) {
             clienteExistente.setFotoPerfil(dadosAtualizados.getFotoPerfil());
         }

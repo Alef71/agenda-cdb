@@ -15,20 +15,13 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         
-        // Libera os cookies/tokens se necessário
         config.setAllowCredentials(true); 
-        
-        // Libera a porta do seu Live Server (VS Code)
         config.setAllowedOrigins(Arrays.asList("http://127.0.0.1:5500", "http://localhost:5500")); 
-        
-        // Libera todos os cabeçalhos
         config.setAllowedHeaders(Arrays.asList("*")); 
-        
-        // Libera todos os métodos HTTP (inclusive o OPTIONS que está dando erro no preflight)
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config); // Aplica para todas as rotas da API
+        source.registerCorsConfiguration("/**", config); 
         
         return new CorsFilter(source);
     }

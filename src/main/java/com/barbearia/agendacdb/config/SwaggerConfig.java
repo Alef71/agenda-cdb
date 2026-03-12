@@ -19,7 +19,6 @@ public class SwaggerConfig {
                         .title("API da Barbearia CDB")
                         .version("1.0")
                         .description("Documentação completa da API de agendamentos e gestão da barbearia."))
-                // Adiciona o botão "Authorize" para colar o Token JWT
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth", new SecurityScheme()

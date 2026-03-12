@@ -1,18 +1,20 @@
 package com.barbearia.agendacdb.config;
 
-import com.barbearia.agendacdb.repositories.BarbeiroRepository;
-import com.barbearia.agendacdb.services.TokenService;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
+import com.barbearia.agendacdb.repositories.BarbeiroRepository;
+import com.barbearia.agendacdb.services.TokenService;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
@@ -27,7 +29,7 @@ public class SecurityFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
        var token = this.recoverToken(request);
         if (token != null) {
-            String login = (String) tokenService.validateToken(token); // <-- Forçamos a ser String
+            String login = (String) tokenService.validateToken(token); 
             var user = barbeiroRepository.findByCpf(login);
 
             if (user.isPresent()) {

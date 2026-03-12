@@ -23,24 +23,18 @@ public class Cliente {
     private String nome;
 
     @Column(name = "telefone")
-    private String telefone; // Será o WhatsApp
+    private String telefone; 
 
     @Lob
     @Column(name = "foto_perfil", columnDefinition = "TEXT")
-    private String fotoPerfil; // Imagem em formato Base64
+    private String fotoPerfil; 
 
-    // Relacionamento: Muitos clientes podem pertencer a Um barbeiro
     @ManyToOne
     @JoinColumn(name = "barbeiro_id", nullable = false)
     private Barbeiro barbeiro;
 
-    // Construtor vazio padrão exigido pelo JPA/Hibernate
     public Cliente() {
     }
-
-    // ==========================================
-    // GETTERS E SETTERS
-    // ==========================================
 
     public UUID getId() {
         return id;
