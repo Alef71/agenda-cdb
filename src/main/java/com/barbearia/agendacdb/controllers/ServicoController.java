@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +27,7 @@ public class ServicoController {
 
     @PostMapping
     public ResponseEntity<ServicoCatalogo> criar(@RequestBody ServicoCatalogo servico) {
-        return ResponseEntity.ok(servicoService.salvar(servico));
+        return ResponseEntity.status(HttpStatus.CREATED).body(servicoService.salvar(servico));
     }
 
     @GetMapping
@@ -35,23 +36,22 @@ public class ServicoController {
     }
 
     @PutMapping("/{id}/preco")
-    public ResponseEntity<ServicoCatalogo> atualizarPreco(@PathVariable UUID id, @RequestBody ServicoCatalogo dados) {
+    public ResponseEntity<ServicoCatalogo> atualizarPreco(
+            @PathVariable UUID id, 
+            @RequestBody ServicoCatalogo dados) {
         return ResponseEntity.ok(servicoService.atualizarPreco(id, dados.getValorBase()));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletar(@PathVariable UUID id) {
-        servicoService.deletar(id);
-        return ResponseEntity.ok("Serviço removido com sucesso!");
-    }
-
-    
     @PutMapping("/{id}")
     public ResponseEntity<ServicoCatalogo> atualizarServico(
             @PathVariable UUID id, 
             @RequestBody ServicoCatalogo dadosAtualizados) {
-        
-        ServicoCatalogo servicoAtualizado = servicoService.atualizar(id, dadosAtualizados);
-        return ResponseEntity.ok(servicoAtualizado);
+        return ResponseEntity.ok(servicoService.atualizar(id, dadosAtualizados));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable UUID id) {
+        servicoService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }

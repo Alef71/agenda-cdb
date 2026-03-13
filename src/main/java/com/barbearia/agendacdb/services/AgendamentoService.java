@@ -8,11 +8,15 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.barbearia.agendacdb.dtos.agenda.AgendamentoRequestDTO;
-import com.barbearia.agendacdb.dtos.agenda.FinalizarAgendamentoDTO;
+import com.barbearia.agendacdb.dtos.agenda.AtualizarStatusDTO;
+import com.barbearia.agendacdb.dtos.exceptions.AcessoNegadoException;
+import com.barbearia.agendacdb.dtos.exceptions.RecursoNaoEncontradoException;
+import com.barbearia.agendacdb.dtos.exceptions.RegraNegocioException;
 import com.barbearia.agendacdb.enums.FormaPagamento;
 import com.barbearia.agendacdb.enums.StatusAgendamento;
 import com.barbearia.agendacdb.models.Agendamento;
@@ -35,14 +39,12 @@ public class AgendamentoService {
     private ServicoRepository servicoRepository;
 
     public Agendamento criarAgendamento(AgendamentoRequestDTO dados) {
-        
         Barbeiro barbeiro = barbeiroRepository.findById(dados.getBarbeiroId())
-                .orElseThrow(() -> new RuntimeException("Barbeiro não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Barbeiro não encontrado."));
                 
         ServicoCatalogo servico = servicoRepository.findById(dados.getServicoId())
-                .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Serviço não encontrado."));
 
-        
         Agendamento agendamento = new Agendamento();
         agendamento.setBarbeiro(barbeiro);
         agendamento.setServico(servico);
@@ -66,69 +68,67 @@ public class AgendamentoService {
         );
 
         if (temConflito) {
-            throw new RuntimeException("Já existe um agendamento neste horário para este barbeiro.");
-        }
-        return agendamentoRepository.save(agendamento);
-    }
-
-    public List<Agendamento> listarAgendaDoDia(UUID barbeiroId, LocalDate data) {
-        
-        LocalDateTime inicioDoDia = data.atStartOfDay();
-        LocalDateTime fimDoDia = data.atTime(LocalTime.MAX);
-
-        return agendamentoRepository.findByBarbeiroIdAndDataHoraInicioBetween(barbeiroId, inicioDoDia, fimDoDia);
-    }
-
-    @Transactional
-    public Agendamento finalizarAgendamento(UUID id, FinalizarAgendamentoDTO dto) {
-        Agendamento agendamento = agendamentoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado."));
-
-        agendamento.setValorCobrado(dto.valorCobrado());
-        agendamento.setFormaPagamento(FormaPagamento.valueOf(dto.formaPagamento().toUpperCase()));
-        agendamento.setStatus(StatusAgendamento.CONCLUIDO);
-
-        return agendamentoRepository.save(agendamento);
-    }
-
-    @Transactional
-    public Agendamento cancelarAgendamento(UUID id) {
-        Agendamento agendamento = agendamentoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado."));
-
-        agendamento.setStatus(StatusAgendamento.CANCELADO);
-
-        return agendamentoRepository.save(agendamento);
-    }
-
-    @Transactional
-    public Agendamento marcarComoFuro(UUID id) {
-        Agendamento agendamento = agendamentoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Agendamento não encontrado."));
-
-        agendamento.setStatus(StatusAgendamento.FURO);
-
-        return agendamentoRepository.save(agendamento);
-    }
-
-    public BigDecimal calcularFaturamentoDoDia(UUID barbeiroId, LocalDate data) {
-        LocalDateTime inicioDoDia = data.atStartOfDay();
-        LocalDateTime fimDoDia = data.atTime(LocalTime.MAX);
-
-        BigDecimal faturamento = agendamentoRepository.somarFaturamentoDoDia(barbeiroId, inicioDoDia, fimDoDia);
-        
-        if (faturamento == null) {
-            return BigDecimal.ZERO;
+            throw new RegraNegocioException("Já existe um agendamento neste horário para este barbeiro.");
         }
         
-        return faturamento;
+        return agendamentoRepository.save(agendamento);
+    }
+
+    public List<Agendamento> listarAgendamentos(UUID barbeiroId, LocalDate dataInicial, LocalDate dataFinal) {
+        LocalDateTime inicio = dataInicial.atStartOfDay();
+        LocalDateTime fim = dataFinal.atTime(LocalTime.MAX);
+        return agendamentoRepository.findByBarbeiroIdAndDataHoraInicioBetween(barbeiroId, inicio, fim);
+    }
+
+    @Transactional
+    public Agendamento atualizarStatus(UUID id, AtualizarStatusDTO dto) {
+        Agendamento agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado."));
+
+        validarDonoDoAgendamento(agendamento);
+
+        try {
+            StatusAgendamento novoStatus = StatusAgendamento.valueOf(dto.status().toUpperCase());
+            agendamento.setStatus(novoStatus);
+
+            if (novoStatus == StatusAgendamento.CONCLUIDO) {
+                if (dto.valorCobrado() != null) agendamento.setValorCobrado(dto.valorCobrado());
+                
+                if (dto.formaPagamento() != null) {
+                    agendamento.setFormaPagamento(FormaPagamento.valueOf(dto.formaPagamento().toUpperCase()));
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            throw new RegraNegocioException("Status ou Forma de Pagamento inválidos.");
+        }
+
+        return agendamentoRepository.save(agendamento);
+    }
+
+    public BigDecimal calcularFaturamento(UUID barbeiroId, LocalDate dataInicial, LocalDate dataFinal) {
+        LocalDateTime inicio = dataInicial.atStartOfDay();
+        LocalDateTime fim = dataFinal.atTime(LocalTime.MAX);
+
+        BigDecimal faturamento = agendamentoRepository.somarFaturamentoPeriodo(barbeiroId, inicio, fim);
+        
+        return (faturamento == null) ? BigDecimal.ZERO : faturamento;
     }
 
     @Transactional
     public void excluirAgendamento(UUID id) {
-        if (!agendamentoRepository.existsById(id)) {
-            throw new RuntimeException("Agendamento não encontrado!");
+        Agendamento agendamento = agendamentoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Agendamento não encontrado!"));
+
+        validarDonoDoAgendamento(agendamento);
+
+        agendamentoRepository.delete(agendamento);
+    }
+
+    private void validarDonoDoAgendamento(Agendamento agendamento) {
+        Barbeiro barbeiroLogado = (Barbeiro) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        
+        if (!agendamento.getBarbeiro().getId().equals(barbeiroLogado.getId())) {
+            throw new AcessoNegadoException("Você não tem permissão para alterar um agendamento de outro barbeiro.");
         }
-        agendamentoRepository.deleteById(id);
     }
 }

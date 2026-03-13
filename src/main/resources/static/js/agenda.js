@@ -32,7 +32,6 @@ function getBarbeiroId() {
     return user.barbeiroId || user.id;
 }
 
-// Função utilitária global para converter imagens em Base64
 function converterParaBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -42,12 +41,8 @@ function converterParaBase64(file) {
     });
 }
 
-// ==========================================
-// FUNÇÕES DOS NOVOS MODAIS (Perfil, Senha, Serviço)
-// ==========================================
-
 async function salvarPerfil(event) {
-    if (event) event.preventDefault(); // Evita o reload da página pelo formulário
+    if (event) event.preventDefault(); 
 
     const barbeiroId = getBarbeiroId(); 
     const token = getAuthToken();
@@ -69,7 +64,6 @@ async function salvarPerfil(event) {
         whatsapp: document.getElementById('perfil-whatsapp').value
     };
 
-    // Só envia a URL da foto se o usuário selecionou uma imagem nova
     if (fotoBase64) {
         dados.fotoUrl = fotoBase64; 
     }
@@ -165,9 +159,6 @@ async function salvarEdicaoServico() {
     } catch (error) { console.error("Erro:", error); }
 }
 
-// ==========================================
-// FUNÇÃO GLOBAL DE EXCLUSÃO DE CLIENTE
-// ==========================================
 window.excluirCliente = async function(id) {
     if (!confirm("Tem certeza que deseja apagar este cliente do sistema?")) return;
     
@@ -180,7 +171,7 @@ window.excluirCliente = async function(id) {
 
         if (response.ok) {
             alert("Cliente excluído com sucesso!");
-            window.dispatchEvent(new CustomEvent('carregarClientesEvent')); // Recarrega a lista
+            window.dispatchEvent(new CustomEvent('carregarClientesEvent')); 
         } else {
             alert("Erro ao excluir. Este cliente pode ter agendamentos vinculados.");
         }
@@ -189,11 +180,6 @@ window.excluirCliente = async function(id) {
         alert("Erro de conexão ao tentar excluir o cliente.");
     }
 }
-
-
-// ==========================================
-// INICIALIZAÇÃO E EVENTOS DOM
-// ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem('@CDB:token');
@@ -223,9 +209,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // ==========================================
-    // LÓGICA DE CLIENTES
-    // ==========================================
     let listaClientesGlobal = [];
     const tabelaListaClientesDOM = document.getElementById('tabela-lista-clientes');
     const inputPesquisaClienteLista = document.getElementById('pesquisa-cliente-lista');
@@ -272,9 +255,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     window.addEventListener('carregarClientesEvent', carregarClientes);
-    carregarClientes(); // Carrega ao iniciar a página
+    carregarClientes(); 
 
-    // Filtro da lista de clientes (Modal)
     if (inputPesquisaClienteLista) {
         inputPesquisaClienteLista.addEventListener('input', (e) => {
             const termoBusca = e.target.value.toLowerCase();
@@ -285,7 +267,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Autocomplete do input de Novo Agendamento
     const inputNomeCliente = document.getElementById('nome-cliente');
     const inputTelefone = document.getElementById('telefone-cliente');
     const inputIdCliente = document.getElementById('id-cliente-selecionado');
@@ -334,12 +315,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Modal de Novo Cliente
     const btnNovoCliente = document.getElementById('btn-novo-cliente');
     const btnFecharModalCliente = document.getElementById('btn-fechar-modal-cliente');
     const formCliente = document.getElementById('form-cliente');
 
-    // Aqui não abrimos mais o modal de cliente direto no menu lateral, mas sim pela lista
     if (btnFecharModalCliente) {
         btnFecharModalCliente.addEventListener('click', () => {
             fecharModal('modal-cliente');
@@ -387,7 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     alert("Cliente cadastrado com sucesso!");
                     fecharModal('modal-cliente');
                     formCliente.reset();
-                    carregarClientes(); // Atualiza as listas globais e da tabela
+                    carregarClientes(); 
                 } else {
                     alert("Erro ao cadastrar cliente: " + await response.text());
                 }
@@ -497,7 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
         containerAgenda.innerHTML = '<p style="color: #999;">Buscando horários...</p>';
 
         try {
-            const url = `http://localhost:8080/api/agendamentos/agenda-do-dia?barbeiroId=${idDoBarbeiro}&data=${dataISO}`;
+           const url = `http://localhost:8080/api/agendamentos?barbeiroId=${idDoBarbeiro}&dataInicial=${dataISO}&dataFinal=${dataISO}`;
             const response = await fetch(url, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -640,13 +619,19 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // --- ROTA DE CANCELAR ATUALIZADA ---
     async function cancelarAgendamento(idAgendamento) {
         if (!confirm("Tem certeza que deseja cancelar este agendamento?")) return;
         try {
-            const response = await fetch(`http://localhost:8080/api/agendamentos/${idAgendamento}/cancelar`, {
+            const response = await fetch(`http://localhost:8080/api/agendamentos/${idAgendamento}/status`, {
                 method: 'PATCH',
-                headers: { 'Authorization': `Bearer ${token}` }
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: "CANCELADO" })
             });
+            
             if (response.ok) {
                 alert("Agendamento cancelado!");
                 carregarAgendaDoDia();
@@ -662,6 +647,7 @@ document.addEventListener("DOMContentLoaded", () => {
         abrirModal('modal-pagamento');
     }
 
+    // --- ROTA DE FINALIZAR/CONCLUIR ATUALIZADA ---
     formPagamento.addEventListener('submit', async (e) => {
         e.preventDefault();
         const idAgendamento = document.getElementById('id-agendamento-pagamento').value;
@@ -669,17 +655,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const formaPagamento = document.getElementById('forma-pagamento').value;
 
         try {
-            const response = await fetch(`http://localhost:8080/api/agendamentos/${idAgendamento}/finalizar`, {
+            const response = await fetch(`http://localhost:8080/api/agendamentos/${idAgendamento}/status`, {
                 method: 'PATCH',
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ valorFinal, formaPagamento })
+                headers: { 
+                    'Authorization': `Bearer ${token}`, 
+                    'Content-Type': 'application/json' 
+                },
+                body: JSON.stringify({ 
+                    status: "CONCLUIDO",
+                    valorCobrado: valorFinal, 
+                    formaPagamento: formaPagamento 
+                })
             });
 
             if (response.ok) {
                 alert("Atendimento finalizado com sucesso!");
                 fecharModal('modal-pagamento');
                 carregarAgendaDoDia();
-            } else { alert("Erro ao finalizar: " + await response.text()); }
+            } else { 
+                alert("Erro ao finalizar: " + await response.text()); 
+            }
         } catch (error) { alert("Erro de conexão."); }
     });
 

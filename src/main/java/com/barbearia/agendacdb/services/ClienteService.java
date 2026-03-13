@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.barbearia.agendacdb.dtos.exceptions.RecursoNaoEncontradoException;
 import com.barbearia.agendacdb.models.Cliente;
 import com.barbearia.agendacdb.repositories.ClienteRepository;
 
@@ -25,7 +26,7 @@ public class ClienteService {
 
     public Cliente buscarPorId(UUID id) {
         return clienteRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado com o ID: " + id));
     }
 
     public Cliente atualizar(UUID id, Cliente dadosAtualizados) {

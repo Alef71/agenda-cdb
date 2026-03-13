@@ -1,12 +1,12 @@
 package com.barbearia.agendacdb.controllers;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder; // Importação adicionada
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -18,66 +18,40 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.barbearia.agendacdb.dtos.AtualizarPerfilDTO;
 import com.barbearia.agendacdb.dtos.AtualizarSenhaDTO;
-import com.barbearia.agendacdb.enums.StatusAprovacao;
+import com.barbearia.agendacdb.dtos.exceptions.AcessoNegadoException;
 import com.barbearia.agendacdb.models.Barbeiro;
-import com.barbearia.agendacdb.repositories.BarbeiroRepository;
+import com.barbearia.agendacdb.services.BarbeiroService;
 
 @RestController
 @RequestMapping("/api/barbeiros")
 public class BarbeiroController {
 
     @Autowired
-    private BarbeiroRepository repository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder; 
+    private BarbeiroService barbeiroService;
 
     @GetMapping
     public ResponseEntity<List<Barbeiro>> listarTodos() {
-        List<Barbeiro> barbeiros = repository.findAll();
-        return ResponseEntity.ok(barbeiros);
+        return ResponseEntity.ok(barbeiroService.listarTodos());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable UUID id) { 
-        if (!repository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-        repository.deleteById(id);
+    public ResponseEntity<Void> excluir(@PathVariable UUID id) {
+        barbeiroService.excluir(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/{id}/aprovar")
     public ResponseEntity<Barbeiro> aprovar(@PathVariable UUID id) {
-        Optional<Barbeiro> barbeiroOptional = repository.findById(id);
-        
-        if (barbeiroOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Barbeiro barbeiro = barbeiroOptional.get();
-        barbeiro.setStatus(StatusAprovacao.APROVADO);
-        
-        repository.save(barbeiro);
-        return ResponseEntity.ok(barbeiro);
+        return ResponseEntity.ok(barbeiroService.aprovar(id));
     }
 
     @PutMapping("/{id}/perfil")
-    public ResponseEntity<Barbeiro> atualizarPerfil(
+    public ResponseEntity<Object> atualizarPerfil(
             @PathVariable UUID id, 
             @RequestBody AtualizarPerfilDTO dto) {
         
-        Optional<Barbeiro> barbeiroOptional = repository.findById(id);
-        if (barbeiroOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Barbeiro barbeiro = barbeiroOptional.get();
-        barbeiro.setNome(dto.nome);
-        barbeiro.setWhatsapp(dto.whatsapp);
-        barbeiro.setFotoUrl(dto.fotoUrl);
-
-        return ResponseEntity.ok(repository.save(barbeiro));
+        validarPermissao(id, "alterar o perfil");
+        return ResponseEntity.ok(barbeiroService.atualizarPerfil(id, dto));
     }
 
     @PatchMapping("/{id}/senha")
@@ -85,19 +59,17 @@ public class BarbeiroController {
             @PathVariable UUID id, 
             @RequestBody AtualizarSenhaDTO dto) {
         
-        Optional<Barbeiro> barbeiroOptional = repository.findById(id);
-        if (barbeiroOptional.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Barbeiro barbeiro = barbeiroOptional.get();
-        if (!passwordEncoder.matches(dto.senhaAntiga, barbeiro.getSenha())) {
-            return ResponseEntity.badRequest().body("Senha antiga incorreta!");
-        }
-
-        barbeiro.setSenha(passwordEncoder.encode(dto.novaSenha)); 
-        repository.save(barbeiro);
-
+        validarPermissao(id, "alterar a senha");
+        barbeiroService.redefinirSenha(id, dto);
         return ResponseEntity.ok("Senha atualizada com sucesso!");
+    }
+
+    private void validarPermissao(UUID idDaUrl, String acao) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Barbeiro barbeiroLogado = (Barbeiro) authentication.getPrincipal();
+
+        if (!barbeiroLogado.getId().equals(idDaUrl)) {
+            throw new AcessoNegadoException("Acesso negado: Você não tem permissão para " + acao + " de outro barbeiro.");
+        }
     }
 }

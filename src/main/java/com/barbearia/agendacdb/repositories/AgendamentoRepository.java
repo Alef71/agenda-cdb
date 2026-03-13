@@ -27,7 +27,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, UUID> 
     @Query("SELECT SUM(a.valorCobrado) FROM Agendamento a WHERE a.barbeiro.id = :barbeiroId " +
            "AND a.status = 'CONCLUIDO' " +
            "AND (a.dataHoraInicio >= :inicio AND a.dataHoraInicio <= :fim)")
-    BigDecimal somarFaturamentoDoDia(@Param("barbeiroId") UUID barbeiroId, 
-                                     @Param("inicio") LocalDateTime inicio, 
-                                     @Param("fim") LocalDateTime fim);
+    BigDecimal somarFaturamentoPeriodo(@Param("barbeiroId") UUID barbeiroId, 
+                                       @Param("inicio") LocalDateTime inicio, 
+                                       @Param("fim") LocalDateTime fim);
 }

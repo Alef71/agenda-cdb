@@ -2,6 +2,7 @@ package com.barbearia.agendacdb.config;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,6 +18,18 @@ public class AdminSeeder implements CommandLineRunner {
     private final BarbeiroRepository barbeiroRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("${admin.default.nome}")
+    private String adminNome;
+
+    @Value("${admin.default.cpf}")
+    private String adminCpf;
+
+    @Value("${admin.default.whatsapp}")
+    private String adminWhatsapp;
+
+    @Value("${admin.default.senha}")
+    private String adminSenha;
+
     public AdminSeeder(BarbeiroRepository barbeiroRepository, PasswordEncoder passwordEncoder) {
         this.barbeiroRepository = barbeiroRepository;
         this.passwordEncoder = passwordEncoder;
@@ -24,23 +37,20 @@ public class AdminSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        String cpfAdmin = "07934307632";
-        
-        
-        Optional<Barbeiro> adminExistente = barbeiroRepository.findByCpf(cpfAdmin);
+        Optional<Barbeiro> adminExistente = barbeiroRepository.findByCpf(adminCpf);
 
         if (adminExistente.isEmpty()) {
             Barbeiro admin = new Barbeiro();
-            admin.setNome("Alef Amaral");
-            admin.setCpf(cpfAdmin);
-            admin.setWhatsapp("33999026412");
-           
-            admin.setSenha(passwordEncoder.encode("Afra-1993")); 
+        
+            admin.setNome(adminNome);
+            admin.setCpf(adminCpf);
+            admin.setWhatsapp(adminWhatsapp);
+            admin.setSenha(passwordEncoder.encode(adminSenha)); 
             admin.setRole(RoleBarbeiro.ADMIN); 
             admin.setStatus(StatusAprovacao.APROVADO); 
 
             barbeiroRepository.save(admin);
-            System.out.println("✅ Usuário ADMIN (Alef Amaral) criado com sucesso no banco de dados!");
+            System.out.println("✅ Usuário ADMIN (" + adminNome + ") criado com sucesso no banco de dados!");
         } else {
             System.out.println("👍 Usuário ADMIN já existe no banco. Pulando criação automática.");
         }

@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.barbearia.agendacdb.dtos.exceptions.RecursoNaoEncontradoException;
 import com.barbearia.agendacdb.models.ServicoCatalogo;
 import com.barbearia.agendacdb.repositories.ServicoRepository;
 
@@ -18,7 +19,7 @@ public class ServicoService {
 
     public ServicoCatalogo atualizar(UUID id, ServicoCatalogo dadosAtualizados) {
         ServicoCatalogo servico = servicoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Serviço não encontrado com o ID: " + id));
 
         servico.setNomeServico(dadosAtualizados.getNomeServico());
         servico.setValorBase(dadosAtualizados.getValorBase());
@@ -28,7 +29,7 @@ public class ServicoService {
 
     public ServicoCatalogo atualizarPreco(UUID id, BigDecimal novoValor) {
         ServicoCatalogo servico = servicoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Serviço não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Serviço não encontrado com o ID: " + id));
 
         servico.setValorBase(novoValor);
         return servicoRepository.save(servico);
@@ -43,6 +44,9 @@ public class ServicoService {
     }
 
     public void deletar(UUID id) {
+        if (!servicoRepository.existsById(id)) {
+            throw new RecursoNaoEncontradoException("Não foi possível deletar. Serviço não encontrado.");
+        }
         servicoRepository.deleteById(id);
     }
 }
