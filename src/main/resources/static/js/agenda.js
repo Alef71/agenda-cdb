@@ -267,7 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    const inputNomeCliente = document.getElementById('nome-cliente');
+ const inputNomeCliente = document.getElementById('nome-cliente');
     const inputTelefone = document.getElementById('telefone-cliente');
     const inputIdCliente = document.getElementById('id-cliente-selecionado');
     const dropdownClientes = document.getElementById('lista-clientes-dropdown');
@@ -276,6 +276,7 @@ document.addEventListener("DOMContentLoaded", () => {
         inputNomeCliente.addEventListener('input', function() {
             const termoBusca = this.value.toLowerCase();
             dropdownClientes.innerHTML = ''; 
+            
             if (termoBusca.length === 0) {
                 dropdownClientes.style.display = 'none';
                 if(inputIdCliente) inputIdCliente.value = '';
@@ -283,7 +284,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const clientesFiltrados = listaClientesGlobal.filter(cliente => 
-                cliente.nome.toLowerCase().includes(termoBusca)
+                cliente.nome && cliente.nome.toLowerCase().includes(termoBusca)
             );
 
             if (clientesFiltrados.length > 0) {
@@ -293,14 +294,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     const li = document.createElement('li');
                     li.textContent = `${cliente.nome} (${cliente.telefone || cliente.whatsapp || 'Sem número'})`; 
                     
+                    // 👇 MUDANÇA APLICADA AQUI
                     li.onclick = () => {
                         inputNomeCliente.value = cliente.nome;
                         if(inputTelefone) inputTelefone.value = cliente.telefone || cliente.whatsapp || ''; 
                         if(inputIdCliente) inputIdCliente.value = cliente.id; 
                         
+                        // Salvando a foto temporariamente no formulário:
+                        formAgendamento.dataset.fotoCliente = cliente.fotoPerfil || cliente.fotoUrl || '';
+                        
                         dropdownClientes.style.display = 'none'; 
                     };
-                    
+                    // 👆 FIM DA MUDANÇA
+
                     dropdownClientes.appendChild(li);
                 });
             } else {
@@ -308,6 +314,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
+        // Fecha o dropdown se clicar fora
         document.addEventListener('click', function(e) {
             if (e.target !== inputNomeCliente && e.target !== dropdownClientes) {
                 dropdownClientes.style.display = 'none';
@@ -315,6 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // Continuação do seu código original...
     const btnNovoCliente = document.getElementById('btn-novo-cliente');
     const btnFecharModalCliente = document.getElementById('btn-fechar-modal-cliente');
     const formCliente = document.getElementById('form-cliente');
@@ -493,12 +501,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function renderizarGradeDeHorarios(agendamentos, dataISO) {
+ function renderizarGradeDeHorarios(agendamentos, dataISO) {
         const containerAgenda = document.getElementById('container-proximo');
         containerAgenda.innerHTML = ''; 
 
         const horariosDoDia = [];
-        for (let h = 8; h <= 19; h++) {
+        for (let h = 7; h <= 18; h++) {
             horariosDoDia.push(`${String(h).padStart(2, '0')}:00`);
             horariosDoDia.push(`${String(h).padStart(2, '0')}:30`);
         }
@@ -524,6 +532,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 const nomeDoServico = agendamentoMarcado.servico ? (agendamentoMarcado.servico.nomeServico || agendamentoMarcado.servico.nome) : (agendamentoMarcado.servicoNome || 'Serviço agendado');
                 const valorDoServico = agendamentoMarcado.servico ? (agendamentoMarcado.servico.valorBase || agendamentoMarcado.servico.preco || 0) : 0;
 
+                // --- Buscando a foto do cliente ou gerando uma com as iniciais ---
+                let fotoClienteUrl = agendamentoMarcado.clienteFotoUrl || agendamentoMarcado.clienteFoto || (agendamentoMarcado.cliente && agendamentoMarcado.cliente.fotoPerfil);
+                
+                // Se vier vazio/null, já define a URL do avatar de iniciais
+                if (!fotoClienteUrl) {
+                    fotoClienteUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(agendamentoMarcado.clienteNome)}&background=232129&color=D4AF37`;
+                }
+
                 let botoesHTML = '';
                 if (!isConcluido) {
                     botoesHTML = `
@@ -534,21 +550,32 @@ document.addEventListener("DOMContentLoaded", () => {
                     botoesHTML = `
                         <div class="status-container" style="display: flex; align-items: center; gap: 10px;">
                             <span style="color: #4ade80; font-size: 14px; font-weight: bold;">Finalizado</span>
-                            <button class="btn-excluir-agendamento" title="Excluir registro">
+                            <button class="btn-excluir-agendamento" title="Excluir registro" style="background: transparent; border: none; color: #999; cursor: pointer; padding: 5px;">
                                 <i data-lucide="trash-2" style="width: 20px; height: 20px;"></i>
                             </button>
                         </div>
                     `;
                 }
 
+                // --- Estrutura HTML atualizada com proteção de erro na imagem (onerror) ---
                 divSlot.innerHTML = `
-                    <div>
-                        <strong style="color: #fff; display: block; font-size: 16px;">${agendamentoMarcado.clienteNome}</strong>
-                        <span style="color: #D4AF37; font-size: 14px;">${nomeDoServico}</span>
-                    </div>
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <strong style="color: #fff; font-size: 18px;">${horario}</strong>
-                        <div style="display: flex; gap: 5px;">
+                        <img src="${fotoClienteUrl}" 
+                             onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(agendamentoMarcado.clienteNome)}&background=232129&color=D4AF37';" 
+                             alt="Foto ${agendamentoMarcado.clienteNome}" 
+                             style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover;">
+                        <div>
+                            <strong style="color: #fff; display: block; font-size: 16px;">${agendamentoMarcado.clienteNome}</strong>
+                            <span style="color: #D4AF37; font-size: 14px;">${nomeDoServico}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="display: flex; align-items: center; gap: 6px; color: #999;">
+                            <i data-lucide="clock" style="color: #D4AF37; width: 16px; height: 16px;"></i>
+                            <strong style="font-size: 16px;">${horario}</strong>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 5px;">
                             ${botoesHTML}
                         </div>
                     </div>
@@ -693,6 +720,7 @@ document.addEventListener("DOMContentLoaded", () => {
             servicoId: servicoId,
             clienteNome: document.getElementById('nome-cliente').value,
             clienteWhatsapp: document.getElementById('telefone-cliente').value, 
+            clienteFotoUrl: formAgendamento.dataset.fotoCliente || '',
             dataHoraInicio: `${document.getElementById('data-agendamento').value}T${document.getElementById('hora-agendamento').value}:00`,
             quantidadeBlocos: 1, 
             isPausa: false,      
@@ -839,6 +867,105 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) { alert("Erro de conexão."); }
     }
 
+    
+
     renderizarCalendario();
     carregarAgendaDoDia();
 });
+
+// ==========================================
+// --- FUNÇÕES GLOBAIS (FORA DO DOMContentLoaded) ---
+// ==========================================
+
+// Função assíncrona para buscar e atualizar o resumo financeiro na tela
+async function atualizarFinanceiro() {
+    const container = document.getElementById('container-financeiro');
+    
+    // Se o container já estiver visível, esconde. Se estiver escondido, mostra.
+    if (container.style.display === 'flex') {
+        container.style.display = 'none';
+        return;
+    }
+
+    try {
+        const token = localStorage.getItem('token'); 
+
+        // ADICIONE ESTA LINHA PARA TESTARMOS:
+        console.log("Meu token atual é:", token); 
+
+        
+        const response = await fetch('http://localhost:8080/api/financeiro/resumo', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) throw new Error('Erro ao carregar os dados financeiros');
+
+        const dados = await response.json();
+
+        // Formatação para Real Brasileiro (BRL)
+        const formatarMoeda = (valor) => 
+            valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // Atualiza os valores nos cards do HTML
+        document.getElementById('faturamento-hoje').innerText = formatarMoeda(dados.faturamentoHoje);
+        document.getElementById('faturamento-mes').innerText = formatarMoeda(dados.faturamentoMesAtual);
+
+        // Mostra o container com os valores atualizados
+        container.style.display = 'flex';
+        
+    } catch (error) {
+        console.error('Erro no financeiro:', error);
+        alert('Não foi possível carregar o resumo financeiro.');
+    }
+}
+
+// ==========================================
+// --- FUNÇÕES GLOBAIS (FORA DO DOMContentLoaded) ---
+// ==========================================
+
+// Função assíncrona para buscar e atualizar o resumo financeiro na tela
+async function atualizarFinanceiro() {
+    const container = document.getElementById('container-financeiro');
+    
+    // Se o container já estiver visível, esconde. Se estiver escondido, mostra.
+    if (container.style.display === 'flex') {
+        container.style.display = 'none';
+        return;
+    }
+
+    try {
+        // CORREÇÃO: Pegando o token com o nome exato salvo no momento do login
+        const token = localStorage.getItem('@CDB:token'); 
+        
+        const response = await fetch('http://localhost:8080/api/financeiro/resumo', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) throw new Error('Erro ao carregar os dados financeiros');
+
+        const dados = await response.json();
+
+        // Formatação para Real Brasileiro (BRL)
+        const formatarMoeda = (valor) => 
+            valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+        // Atualiza os valores nos cards do HTML
+        document.getElementById('faturamento-hoje').innerText = formatarMoeda(dados.faturamentoHoje);
+        document.getElementById('faturamento-mes').innerText = formatarMoeda(dados.faturamentoMesAtual);
+
+        // Mostra o container com os valores atualizados
+        container.style.display = 'flex';
+        
+    } catch (error) {
+        console.error('Erro no financeiro:', error);
+        alert('Não foi possível carregar o resumo financeiro.');
+    }
+}

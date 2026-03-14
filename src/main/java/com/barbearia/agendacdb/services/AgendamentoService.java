@@ -50,6 +50,7 @@ public class AgendamentoService {
         agendamento.setServico(servico);
         agendamento.setClienteNome(dados.getClienteNome());
         agendamento.setClienteWhatsapp(dados.getClienteWhatsapp());
+        agendamento.setClienteFotoUrl(dados.getClienteFotoUrl());
         agendamento.setDataHoraInicio(dados.getDataHoraInicio());
         agendamento.setQuantidadeBlocos(dados.getQuantidadeBlocos());
         agendamento.setIsPausa(dados.getIsPausa());

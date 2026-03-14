@@ -8,13 +8,13 @@ public class AgendamentoRequestDTO {
     private UUID servicoId;
     private String clienteNome;
     private String clienteWhatsapp;
+    private String clienteFotoUrl; 
     private LocalDateTime dataHoraInicio;
     private Integer quantidadeBlocos;
     private Boolean isPausa;
     private String observacao;
 
     public AgendamentoRequestDTO() {}
-
 
     public UUID getBarbeiroId() { return barbeiroId; }
     public void setBarbeiroId(UUID barbeiroId) { this.barbeiroId = barbeiroId; }
@@ -27,6 +27,9 @@ public class AgendamentoRequestDTO {
 
     public String getClienteWhatsapp() { return clienteWhatsapp; }
     public void setClienteWhatsapp(String clienteWhatsapp) { this.clienteWhatsapp = clienteWhatsapp; }
+
+    public String getClienteFotoUrl() { return clienteFotoUrl; }
+    public void setClienteFotoUrl(String clienteFotoUrl) { this.clienteFotoUrl = clienteFotoUrl; }
 
     public LocalDateTime getDataHoraInicio() { return dataHoraInicio; }
     public void setDataHoraInicio(LocalDateTime dataHoraInicio) { this.dataHoraInicio = dataHoraInicio; }

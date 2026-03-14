@@ -26,7 +26,6 @@ public class Agendamento {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    // O relacionamento está perfeito e vai funcionar com o Cascade da classe Barbeiro
     @ManyToOne
     @JoinColumn(name = "barbeiro_id", nullable = false)
     private Barbeiro barbeiro;
@@ -37,6 +36,8 @@ public class Agendamento {
 
     private String clienteNome;
     private String clienteWhatsapp;
+
+    @Column(columnDefinition = "TEXT")
     private String clienteFotoUrl; 
 
     @Column(nullable = false)

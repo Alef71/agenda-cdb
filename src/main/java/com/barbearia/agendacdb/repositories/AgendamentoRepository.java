@@ -17,6 +17,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, UUID> 
 
     List<Agendamento> findByBarbeiroIdAndDataHoraInicioBetween(UUID barbeiroId, LocalDateTime start, LocalDateTime end);
 
+    // Valida se há choque de horários, ignorando agendamentos que não ocupam mais a cadeira
     @Query("SELECT COUNT(a) > 0 FROM Agendamento a WHERE a.barbeiro.id = :barbeiroId " +
            "AND a.status != 'CANCELADO' AND a.status != 'FURO' " +
            "AND (a.dataHoraInicio < :fim AND a.dataHoraFim > :inicio)")
@@ -24,6 +25,7 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, UUID> 
                                   @Param("inicio") LocalDateTime inicio, 
                                   @Param("fim") LocalDateTime fim);
 
+    // Soma apenas o que foi REALMENTE cobrado e concluído
     @Query("SELECT SUM(a.valorCobrado) FROM Agendamento a WHERE a.barbeiro.id = :barbeiroId " +
            "AND a.status = 'CONCLUIDO' " +
            "AND (a.dataHoraInicio >= :inicio AND a.dataHoraInicio <= :fim)")

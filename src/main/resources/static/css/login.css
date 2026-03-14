@@ -306,3 +306,46 @@ flex:1;
 }
 
 }
+/* ================= RESPONSIVO TELA DE LOGIN (MOBILE) ================= */
+@media(max-width: 1000px) {
+    
+    /* Esconde o lado esquerdo (banner com logo gigante) no celular */
+    .auth-side-banner {
+        display: none !important;
+    }
+
+    /* O lado direito (fundo) ocupa a tela inteira */
+    .auth-side-form {
+        flex: 1;
+        padding: 20px; /* Dá um respiro para o card não grudar na borda do celular */
+    }
+
+    /* Ajusta a caixa principal do formulário */
+    .auth-card {
+        position: relative; /* Tira o absolute para centralizar naturalmente */
+        width: 100%;
+        max-width: 380px; 
+        padding: 40px 20px; /* Diminui o espaço interno que estava espremendo os inputs */
+        border: 1px solid rgba(212, 175, 55, 0.15); /* Coloca uma borda dourada bem suave para destacar o card do fundo escuro */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+
+    /* Diminui um pouco o título 'Login' para não ficar gigante na tela */
+    .header-text {
+        margin-bottom: 30px;
+    }
+    .header-text h2 {
+        font-size: 28px;
+    }
+
+    .input-group {
+        padding: 14px;
+    }
+    .input-group input {
+        font-size: 16px;
+    }
+    .btn-primary {
+        padding: 15px;
+        font-size: 15px;
+    }
+}
