@@ -19,7 +19,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource; // Importação importante para o Preflight
 
 @Configuration
 @EnableWebSecurity
@@ -34,10 +35,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+            // 1. Configura o CORS antes de tudo
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(authorize -> authorize
+                // 2. LIBERAÇÃO CRUCIAL PARA CORS: Permite requisições OPTIONS do navegador
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() 
+                
                 .requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/registrar").permitAll()
                 .requestMatchers("/api/servicos", "/api/servicos/**").permitAll()
@@ -64,8 +69,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Garante que se as origens vierem como uma única string com vírgulas (comum no Render),
-        // o Spring consiga separar os domínios corretamente.
+        // Tratamento para garantir que múltiplas URLs separadas por vírgula funcionem no Render
         if (origensPermitidas != null && origensPermitidas.size() == 1 && origensPermitidas.get(0).contains(",")) {
             List<String> listaFormatada = Arrays.asList(origensPermitidas.get(0).split(","));
             configuration.setAllowedOrigins(listaFormatada);
@@ -74,9 +78,9 @@ public class SecurityConfig {
         }
 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
         configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L); // Cache de 1 hora para evitar requisições OPTIONS repetitivas
+        configuration.setMaxAge(3600L); 
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
