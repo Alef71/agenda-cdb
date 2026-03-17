@@ -1,3 +1,6 @@
+// --- URL DA API CENTRALIZADA ---
+const API_BASE_URL = "https://api-cdb.onrender.com";
+
 document.addEventListener("DOMContentLoaded", () => {
     const token = localStorage.getItem('@CDB:token');
     const userDataStr = localStorage.getItem('@CDB:user');
@@ -46,7 +49,7 @@ async function carregarPainelAdmin() {
     if (!listaPendentes || !listaAprovados) return;
 
     try {
-        const response = await fetch('http://localhost:8080/api/barbeiros', {
+        const response = await fetch(`${API_BASE_URL}/api/barbeiros`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`, 
@@ -80,7 +83,9 @@ async function carregarPainelAdmin() {
             }
 
             // Renderiza os ícones do Lucide nos novos elementos
-            lucide.createIcons(); 
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons(); 
+            }
         }
     } catch (error) {
         console.error("Erro ao carregar painel:", error);
@@ -132,7 +137,7 @@ window.aprovarBarbeiro = async function(id) {
 
     const token = localStorage.getItem('@CDB:token');
     try {
-        const response = await fetch(`http://localhost:8080/api/barbeiros/${id}/aprovar`, {
+        const response = await fetch(`${API_BASE_URL}/api/barbeiros/${id}/aprovar`, {
             method: 'PUT',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -156,7 +161,7 @@ window.recusarBarbeiro = async function(id) {
 
     const token = localStorage.getItem('@CDB:token');
     try {
-        const response = await fetch(`http://localhost:8080/api/barbeiros/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/barbeiros/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });

@@ -1,3 +1,6 @@
+// --- URL DA API CENTRALIZADA ---
+const API_BASE_URL = "https://api-cdb.onrender.com";
+
 function mudarTela(idTelaAlvo) {
     const telas = document.querySelectorAll('.tela');
     telas.forEach(tela => {
@@ -69,7 +72,7 @@ async function salvarPerfil(event) {
     }
 
     try {
-        const response = await fetch(`http://localhost:8080/api/barbeiros/${barbeiroId}/perfil`, {
+        const response = await fetch(`${API_BASE_URL}/api/barbeiros/${barbeiroId}/perfil`, {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
@@ -103,7 +106,7 @@ async function salvarSenha() {
     };
 
     try {
-        const response = await fetch(`http://localhost:8080/api/barbeiros/${barbeiroId}/senha`, {
+        const response = await fetch(`${API_BASE_URL}/api/barbeiros/${barbeiroId}/senha`, {
             method: 'PATCH',
             headers: { 
                 'Content-Type': 'application/json',
@@ -140,7 +143,7 @@ async function salvarEdicaoServico() {
     };
 
     try {
-        const response = await fetch(`http://localhost:8080/api/servicos/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/servicos/${id}`, {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',
@@ -164,7 +167,7 @@ window.excluirCliente = async function(id) {
     
     const token = getAuthToken();
     try {
-        const response = await fetch(`http://localhost:8080/api/clientes/${id}`, {
+        const response = await fetch(`${API_BASE_URL}/api/clientes/${id}`, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -242,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function carregarClientes() {
         try {
-            const response = await fetch('http://localhost:8080/api/clientes', {
+            const response = await fetch(`${API_BASE_URL}/api/clientes`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             }); 
             if (response.ok) {
@@ -267,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
- const inputNomeCliente = document.getElementById('nome-cliente');
+    const inputNomeCliente = document.getElementById('nome-cliente');
     const inputTelefone = document.getElementById('telefone-cliente');
     const inputIdCliente = document.getElementById('id-cliente-selecionado');
     const dropdownClientes = document.getElementById('lista-clientes-dropdown');
@@ -294,18 +297,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     const li = document.createElement('li');
                     li.textContent = `${cliente.nome} (${cliente.telefone || cliente.whatsapp || 'Sem número'})`; 
                     
-                    // 👇 MUDANÇA APLICADA AQUI
                     li.onclick = () => {
                         inputNomeCliente.value = cliente.nome;
                         if(inputTelefone) inputTelefone.value = cliente.telefone || cliente.whatsapp || ''; 
                         if(inputIdCliente) inputIdCliente.value = cliente.id; 
                         
-                        // Salvando a foto temporariamente no formulário:
                         formAgendamento.dataset.fotoCliente = cliente.fotoPerfil || cliente.fotoUrl || '';
                         
                         dropdownClientes.style.display = 'none'; 
                     };
-                    // 👆 FIM DA MUDANÇA
 
                     dropdownClientes.appendChild(li);
                 });
@@ -314,7 +314,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Fecha o dropdown se clicar fora
         document.addEventListener('click', function(e) {
             if (e.target !== inputNomeCliente && e.target !== dropdownClientes) {
                 dropdownClientes.style.display = 'none';
@@ -322,7 +321,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Continuação do seu código original...
     const btnNovoCliente = document.getElementById('btn-novo-cliente');
     const btnFecharModalCliente = document.getElementById('btn-fechar-modal-cliente');
     const formCliente = document.getElementById('form-cliente');
@@ -361,7 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             try {
-                const response = await fetch('http://localhost:8080/api/clientes', {
+                const response = await fetch(`${API_BASE_URL}/api/clientes`, {
                     method: 'POST',
                     headers: { 
                         'Authorization': `Bearer ${token}`, 
@@ -484,7 +482,7 @@ document.addEventListener("DOMContentLoaded", () => {
         containerAgenda.innerHTML = '<p style="color: #999;">Buscando horários...</p>';
 
         try {
-           const url = `http://localhost:8080/api/agendamentos?barbeiroId=${idDoBarbeiro}&dataInicial=${dataISO}&dataFinal=${dataISO}`;
+            const url = `${API_BASE_URL}/api/agendamentos?barbeiroId=${idDoBarbeiro}&dataInicial=${dataISO}&dataFinal=${dataISO}`;
             const response = await fetch(url, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -501,7 +499,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
- function renderizarGradeDeHorarios(agendamentos, dataISO) {
+    function renderizarGradeDeHorarios(agendamentos, dataISO) {
         const containerAgenda = document.getElementById('container-proximo');
         containerAgenda.innerHTML = ''; 
 
@@ -532,10 +530,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const nomeDoServico = agendamentoMarcado.servico ? (agendamentoMarcado.servico.nomeServico || agendamentoMarcado.servico.nome) : (agendamentoMarcado.servicoNome || 'Serviço agendado');
                 const valorDoServico = agendamentoMarcado.servico ? (agendamentoMarcado.servico.valorBase || agendamentoMarcado.servico.preco || 0) : 0;
 
-                // --- Buscando a foto do cliente ou gerando uma com as iniciais ---
                 let fotoClienteUrl = agendamentoMarcado.clienteFotoUrl || agendamentoMarcado.clienteFoto || (agendamentoMarcado.cliente && agendamentoMarcado.cliente.fotoPerfil);
                 
-                // Se vier vazio/null, já define a URL do avatar de iniciais
                 if (!fotoClienteUrl) {
                     fotoClienteUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(agendamentoMarcado.clienteNome)}&background=232129&color=D4AF37`;
                 }
@@ -557,7 +553,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     `;
                 }
 
-                // --- Estrutura HTML atualizada com proteção de erro na imagem (onerror) ---
                 divSlot.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <img src="${fotoClienteUrl}" 
@@ -625,7 +620,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!confirmar) return;
 
         try {
-            const response = await fetch(`http://localhost:8080/api/agendamentos/${idAgendamento}`, {
+            const response = await fetch(`${API_BASE_URL}/api/agendamentos/${idAgendamento}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -646,11 +641,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- ROTA DE CANCELAR ATUALIZADA ---
     async function cancelarAgendamento(idAgendamento) {
         if (!confirm("Tem certeza que deseja cancelar este agendamento?")) return;
         try {
-            const response = await fetch(`http://localhost:8080/api/agendamentos/${idAgendamento}/status`, {
+            const response = await fetch(`${API_BASE_URL}/api/agendamentos/${idAgendamento}/status`, {
                 method: 'PATCH',
                 headers: { 
                     'Authorization': `Bearer ${token}`,
@@ -674,7 +668,6 @@ document.addEventListener("DOMContentLoaded", () => {
         abrirModal('modal-pagamento');
     }
 
-    // --- ROTA DE FINALIZAR/CONCLUIR ATUALIZADA ---
     formPagamento.addEventListener('submit', async (e) => {
         e.preventDefault();
         const idAgendamento = document.getElementById('id-agendamento-pagamento').value;
@@ -682,7 +675,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const formaPagamento = document.getElementById('forma-pagamento').value;
 
         try {
-            const response = await fetch(`http://localhost:8080/api/agendamentos/${idAgendamento}/status`, {
+            const response = await fetch(`${API_BASE_URL}/api/agendamentos/${idAgendamento}/status`, {
                 method: 'PATCH',
                 headers: { 
                     'Authorization': `Bearer ${token}`, 
@@ -728,7 +721,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/api/agendamentos', {
+            const response = await fetch(`${API_BASE_URL}/api/agendamentos`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(corpoRequisicao)
@@ -751,7 +744,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function carregarServicosParaSelect() {
         const selectServico = document.getElementById('select-servico');
         try {
-            const response = await fetch('http://localhost:8080/api/servicos', {
+            const response = await fetch(`${API_BASE_URL}/api/servicos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -791,7 +784,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function carregarTabelaConfiguracao() {
         tabelaListaServicos.innerHTML = '<tr><td colspan="3">Carregando...</td></tr>';
         try {
-            const response = await fetch('http://localhost:8080/api/servicos', {
+            const response = await fetch(`${API_BASE_URL}/api/servicos`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -834,7 +827,7 @@ document.addEventListener("DOMContentLoaded", () => {
             };
 
             try {
-                const response = await fetch('http://localhost:8080/api/servicos', {
+                const response = await fetch(`${API_BASE_URL}/api/servicos`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify(corpoRequisicao)
@@ -854,7 +847,7 @@ document.addEventListener("DOMContentLoaded", () => {
     async function excluirServicoDaAPI(id) {
         if (!confirm("Apagar este serviço do banco de dados?")) return;
         try {
-            const response = await fetch(`http://localhost:8080/api/servicos/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/servicos/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -866,8 +859,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (error) { alert("Erro de conexão."); }
     }
-
-    
 
     renderizarCalendario();
     carregarAgendaDoDia();
@@ -888,60 +879,9 @@ async function atualizarFinanceiro() {
     }
 
     try {
-        const token = localStorage.getItem('token'); 
-
-        // ADICIONE ESTA LINHA PARA TESTARMOS:
-        console.log("Meu token atual é:", token); 
-
-        
-        const response = await fetch('http://localhost:8080/api/financeiro/resumo', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) throw new Error('Erro ao carregar os dados financeiros');
-
-        const dados = await response.json();
-
-        // Formatação para Real Brasileiro (BRL)
-        const formatarMoeda = (valor) => 
-            valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-
-        // Atualiza os valores nos cards do HTML
-        document.getElementById('faturamento-hoje').innerText = formatarMoeda(dados.faturamentoHoje);
-        document.getElementById('faturamento-mes').innerText = formatarMoeda(dados.faturamentoMesAtual);
-
-        // Mostra o container com os valores atualizados
-        container.style.display = 'flex';
-        
-    } catch (error) {
-        console.error('Erro no financeiro:', error);
-        alert('Não foi possível carregar o resumo financeiro.');
-    }
-}
-
-// ==========================================
-// --- FUNÇÕES GLOBAIS (FORA DO DOMContentLoaded) ---
-// ==========================================
-
-// Função assíncrona para buscar e atualizar o resumo financeiro na tela
-async function atualizarFinanceiro() {
-    const container = document.getElementById('container-financeiro');
-    
-    // Se o container já estiver visível, esconde. Se estiver escondido, mostra.
-    if (container.style.display === 'flex') {
-        container.style.display = 'none';
-        return;
-    }
-
-    try {
-        // CORREÇÃO: Pegando o token com o nome exato salvo no momento do login
         const token = localStorage.getItem('@CDB:token'); 
         
-        const response = await fetch('http://localhost:8080/api/financeiro/resumo', {
+        const response = await fetch(`${API_BASE_URL}/api/financeiro/resumo`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,

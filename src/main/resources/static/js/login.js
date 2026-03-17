@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const API_URL = "http://localhost:8080/api/auth"; 
+    // URL ATUALIZADA AQUI: Apontando para o backend no Render
+    const API_URL = "https://api-cdb.onrender.com/api/auth"; 
 
     // Elementos de View
     const viewLogin = document.getElementById('view-login');
