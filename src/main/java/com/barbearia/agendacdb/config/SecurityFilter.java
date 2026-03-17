@@ -1,9 +1,11 @@
 package com.barbearia.agendacdb.config;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -27,25 +29,40 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-       var token = this.recoverToken(request);
-        if (token != null) {
-            String login = (String) tokenService.validateToken(token); 
-            var user = barbeiroRepository.findByCpf(login);
+        // Ignora a validação de token para requisições OPTIONS (Preflight do CORS)
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            if (user.isPresent()) {
-                var authorities = java.util.Collections.singletonList(
-                        new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.get().getRole().name())
-                );
-                var authentication = new UsernamePasswordAuthenticationToken(user.get(), null, authorities);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+        var token = this.recoverToken(request);
+        if (token != null) {
+            try {
+                String login = (String) tokenService.validateToken(token); 
+                if (login != null) {
+                    var userOptional = barbeiroRepository.findByCpf(login);
+
+                    if (userOptional.isPresent()) {
+                        var user = userOptional.get();
+                        var authorities = Collections.singletonList(
+                            new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
+                        );
+                        var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                }
+            } catch (Exception e) {
+                // Em caso de erro no token, limpa o contexto para garantir segurança
+                SecurityContextHolder.clearContext();
             }
         }
+        
         filterChain.doFilter(request, response);
     }
 
     private String recoverToken(HttpServletRequest request) {
         var authHeader = request.getHeader("Authorization");
-        if (authHeader == null) return null;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return null;
         return authHeader.replace("Bearer ", "");
     }
 }
