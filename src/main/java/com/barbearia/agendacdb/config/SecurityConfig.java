@@ -64,10 +64,19 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        configuration.setAllowedOrigins(origensPermitidas);
+        // Garante que se as origens vierem como uma única string com vírgulas (comum no Render),
+        // o Spring consiga separar os domínios corretamente.
+        if (origensPermitidas != null && origensPermitidas.size() == 1 && origensPermitidas.get(0).contains(",")) {
+            List<String> listaFormatada = Arrays.asList(origensPermitidas.get(0).split(","));
+            configuration.setAllowedOrigins(listaFormatada);
+        } else {
+            configuration.setAllowedOrigins(origensPermitidas);
+        }
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L); // Cache de 1 hora para evitar requisições OPTIONS repetitivas
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
